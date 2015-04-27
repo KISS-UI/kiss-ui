@@ -21,5 +21,7 @@ def_attrs! {
     // Layout attributes
     ALIGNMENT_VERT = "ALIGNMENTLIN",
     ALIGNMENT_HORI = "ALIGNMENTCOL",
-    ORIENTATION = "ORIENTATION"
+    ORIENTATION = "ORIENTATION",
+
+    IMAGE = "IMAGE"
 }
