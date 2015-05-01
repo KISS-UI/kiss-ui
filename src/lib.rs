@@ -3,11 +3,25 @@
 extern crate libc;
 extern crate iup_sys;
 
-macro_rules! impl_into_base_widget {
+macro_rules! impl_base_widget {
     ($ty:ty) => (
         impl Into<::BaseWidget> for $ty {
             fn into(self) -> BaseWidget {
                 self.0
+            }
+        }
+
+        impl ::std::ops::Deref for $ty {
+            type Target = BaseWidget;
+
+            fn deref(&self) -> &BaseWidget {
+                &self.0
+            }
+        }
+
+        impl ::std::ops::DerefMut for $ty {
+            fn deref_mut(&mut self) -> &mut BaseWidget {
+                &mut self.0
             }
         }
     )
@@ -20,6 +34,7 @@ mod cstr_utils;
 // User-facing modules
 pub mod container;
 pub mod dialog;
+pub mod image;
 pub mod text;
 
 use cstr_utils::AsCStr;
@@ -53,39 +68,51 @@ impl BaseWidget {
         BaseWidget(ptr)
     }
 
+    fn from_ptr_opt(ptr: *mut iup_sys::Ihandle) -> Option<BaseWidget> {
+        if !ptr.is_null() {
+            Some(BaseWidget(ptr))
+        } else {
+            None
+        }
+    }
+
     fn as_ptr(&self) -> *mut iup_sys::Ihandle {
         self.0
     }
 
-    fn set_str_attribute<V>(&mut self, name: &'static str, val: V) where V: Into<Vec<u8>> {
+    fn ptr_not_null(&self) -> *mut iup_sys::Ihandle {
         assert!(!self.0.is_null());
+        self.0
+    }
+
+    fn set_str_attribute<V>(&mut self, name: &'static str, val: V) where V: Into<Vec<u8>> {
         let c_val = CString::new(val).unwrap();
-        unsafe { iup_sys::IupSetAttribute(self.as_ptr(), name.as_cstr(), c_val.as_ptr()); }
+        unsafe { iup_sys::IupSetAttribute(self.ptr_not_null(), name.as_cstr(), c_val.as_ptr()); }
     }
 
     fn set_const_str_attribute(&mut self, name: &'static str, val: &'static str) {
-        assert!(!self.0.is_null());
-        unsafe { iup_sys::IupSetAttribute(self.as_ptr(), name.as_cstr(), val.as_cstr()); }
+        unsafe { iup_sys::IupSetAttribute(self.ptr_not_null(), name.as_cstr(), val.as_cstr()); }
     }
-}
 
-impl Widget for BaseWidget {
-    fn show(&mut self) {
-        unsafe { iup_sys::IupShow(self.0); }  
+    fn set_attr_handle<H: Into<BaseWidget>>(&self, name: &'static str, handle: H) {
+        unsafe { iup_sys::IupSetAttributeHandle(self.ptr_not_null(), name.as_cstr(), handle.into().ptr_not_null()); }
+    }
+
+    fn get_attr_handle(&self, name: &'static str) -> Option<BaseWidget> {
+        let existing = unsafe { iup_sys::IupGetAttributeHandle(self.ptr_not_null(), name.as_cstr()) };
+        BaseWidget::from_ptr_opt(existing)
+    }
+
+    fn destroy(self) {
+        unsafe { iup_sys::IupDestroy(self.ptr_not_null()); }
+    }
+
+    pub fn show(&mut self) {
+        unsafe { iup_sys::IupShow(self.ptr_not_null()); }
     }
 
     fn hide(&mut self) {
-        unsafe { iup_sys::IupHide(self.0); }
-    }
-}
-
-impl<W: AsMut<BaseWidget>> Widget for W {
-    fn show(&mut self) {
-        self.as_mut().show()
-    }
-
-    fn hide(&mut self) {
-        self.as_mut().hide()
+        unsafe { iup_sys::IupHide(self.ptr_not_null()); }
     }
 }
 

@@ -14,13 +14,20 @@ impl Label {
     pub fn new_empty() -> Label {
         use std::ptr;
         let ptr = unsafe { ::iup_sys::IupLabel(ptr::null()) };
-        Label(baseWidget::from_ptr(ptr))
+        Label(BaseWidget::from_ptr(ptr))
     }
 
     pub fn set_image(self, image: ::image::Image) -> Label {
-        let ptr = image.0.as_ptr();
-        unsafe { iup_sys::IupSetAttributeHandle(self.0.as_ptr(), ::attrs::IMAGE, 
+        // Deallocate the existing image if there is one.
+        let existing = unsafe { ::iup_sys::IupGetAttributeHandle(self.0.as_ptr(), ::attrs::IMAGE) };    
+        if !existing.is_null() {
+            BaseWidget::from_ptr(existing).destroy();
+        }
+
+        unsafe { ::iup_sys::IupSetAttributeHandle(self.0.as_ptr(), ::attrs::IMAGE, image.0.as_ptr()); }
+
+        self
     }
 }
 
-impl_into_base_widget! { Label }
+impl_base_widget! { Label }
