@@ -19,12 +19,10 @@ impl Label {
 
     pub fn set_image(self, image: ::image::Image) -> Label {
         // Deallocate the existing image if there is one.
-        let existing = unsafe { ::iup_sys::IupGetAttributeHandle(self.0.as_ptr(), ::attrs::IMAGE) };    
-        if !existing.is_null() {
-            BaseWidget::from_ptr(existing).destroy();
-        }
+        self.get_attr_handle(::attrs::IMAGE)
+            .map(|img| img.destroy()); 
 
-        unsafe { ::iup_sys::IupSetAttributeHandle(self.0.as_ptr(), ::attrs::IMAGE, image.0.as_ptr()); }
+        self.set_attr_handle(::attrs::IMAGE, image);
 
         self
     }

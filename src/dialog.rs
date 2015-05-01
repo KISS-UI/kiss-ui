@@ -28,9 +28,4 @@ impl Dialog {
     }
 }
 
-impl AsMut<BaseWidget> for Dialog {
-    fn as_mut(&mut self) -> &mut BaseWidget {
-        &mut self.0
-    }
-}
-
+impl_base_widget! { Dialog }
