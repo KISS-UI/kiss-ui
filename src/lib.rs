@@ -1,11 +1,11 @@
-#![feature(collections, libc)]
+#![feature(collections, libc, scoped_tls)]
 
 extern crate libc;
 extern crate iup_sys;
 
 macro_rules! impl_base_widget {
-    ($ty:ty) => (
-        impl Into<::BaseWidget> for $ty {
+    ($ty:ty, $ty_cons:path, $classname:expr) => (
+        impl Into<BaseWidget> for $ty {
             fn into(self) -> BaseWidget {
                 self.0
             }
@@ -24,6 +24,16 @@ macro_rules! impl_base_widget {
                 &mut self.0
             }
         }
+
+        impl ::Downcast for $ty {
+            unsafe fn downcast(base: BaseWidget) -> $ty {
+                $ty_cons(base)
+            }
+
+            fn classname() -> &'static str {
+                $classname
+            }
+        }
     )
 }
 
@@ -32,6 +42,10 @@ mod attrs;
 mod cstr_utils;
 
 // User-facing modules
+#[macro_use]
+pub mod callback;
+
+pub mod button;
 pub mod container;
 pub mod dialog;
 pub mod image;
@@ -39,7 +53,7 @@ pub mod text;
 
 use cstr_utils::AsCStr;
 
-use std::ffi::CString;
+use std::ffi::{CStr, CString};
 use std::ptr;
 
 pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> dialog::Dialog {
@@ -49,11 +63,6 @@ pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> dialog::Dialog {
         iup_sys::IupMainLoop();
         iup_sys::IupClose();
     }
-}
-
-pub trait Widget {
-    fn show(&mut self);
-    fn hide(&mut self);
 }
 
 pub struct BaseWidget(*mut iup_sys::Ihandle);
@@ -87,7 +96,19 @@ impl BaseWidget {
 
     fn set_str_attribute<V>(&mut self, name: &'static str, val: V) where V: Into<Vec<u8>> {
         let c_val = CString::new(val).unwrap();
-        unsafe { iup_sys::IupSetAttribute(self.ptr_not_null(), name.as_cstr(), c_val.as_ptr()); }
+        unsafe { iup_sys::IupSetStrAttribute(self.ptr_not_null(), name.as_cstr(), c_val.as_ptr()); }
+    }
+
+    fn set_opt_str_attribute<V>(&mut self, name: &'static str, val: Option<V>) where V: Into<Vec<u8>> {
+        let c_val = val.map(CString::new).map(Result::unwrap);
+        unsafe { 
+            iup_sys::IupSetStrAttribute(
+                self.ptr_not_null(),
+                name.as_cstr(),
+                // This looks backwards, but check the docs. It's right.
+                c_val.as_ref().map_or_else(ptr::null, |c_val| c_val.as_ptr())
+            )
+        }
     }
 
     fn set_const_str_attribute(&mut self, name: &'static str, val: &'static str) {
@@ -103,6 +124,10 @@ impl BaseWidget {
         BaseWidget::from_ptr_opt(existing)
     }
 
+    fn set_callback(&mut self, name: &'static str, callback: ::iup_sys::Icallback) {
+        unsafe { iup_sys::IupSetCallback(self.as_ptr(), name.as_cstr(), callback); } 
+    } 
+
     fn destroy(self) {
         unsafe { iup_sys::IupDestroy(self.ptr_not_null()); }
     }
@@ -114,7 +139,21 @@ impl BaseWidget {
     fn hide(&mut self) {
         unsafe { iup_sys::IupHide(self.ptr_not_null()); }
     }
+
+    pub fn downcast<T>(self) -> Result<T, Self> where T: Downcast {
+        if T::classname().as_bytes() == self.classname().to_bytes() {
+            Ok(unsafe { T::downcast(self) })
+        } else {
+            Err(self)
+        }
+    }
+
+    fn classname(&self) -> &CStr {
+        unsafe { CStr::from_ptr(iup_sys::IupGetClassName(self.as_ptr())) } 
+    }
 }
 
-
-
+pub trait Downcast: Into<BaseWidget> {
+    unsafe fn downcast(base: BaseWidget) -> Self;
+    fn classname() -> &'static str;
+}

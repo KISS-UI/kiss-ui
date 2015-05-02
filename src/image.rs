@@ -1,5 +1,7 @@
 use super::BaseWidget;
 
+use std::ops::{Deref, DerefMut};
+
 pub struct Image(BaseWidget);
 
 impl Image {
@@ -16,4 +18,19 @@ impl Image {
     }
 }
 
-impl_base_widget!{ Image }
+impl_base_widget!{ Image, Image, "image" }
+
+pub trait ImageContainer: DerefMut<Target=BaseWidget> + Sized {
+    fn set_image(self, image: Image) -> Self {
+        // Deallocate the existing image if there is one.
+        self.get_attr_handle(::attrs::IMAGE).map(|img| img.destroy());
+        self.set_attr_handle(::attrs::IMAGE, image);
+
+        self
+    }
+
+    fn get_image(&self) -> Option<Image> {
+        self.get_attr_handle(::attrs::IMAGE).map(Image)
+    }
+}
+

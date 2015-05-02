@@ -23,5 +23,9 @@ def_attrs! {
     ALIGNMENT_HORI = "ALIGNMENTCOL",
     ORIENTATION = "ORIENTATION",
 
-    IMAGE = "IMAGE"
+    // Handles
+    IMAGE = "IMAGE",
+
+    //Callbacks
+    ACTION = "ACTION"
 }

@@ -1,4 +1,4 @@
-use super::{BaseWidget, Widget};
+use super::BaseWidget;
 
 use cstr_utils::AsCStr;
 
@@ -17,15 +17,15 @@ impl Dialog {
     }
 
     pub fn set_title(mut self, title: &str) -> Self {
-        self.0.set_str_attribute(::attrs::TITLE, title);
+        self.set_str_attribute(::attrs::TITLE, title);
         self
     }
 
     pub fn set_size_pixels(mut self, width: u32, height: u32) -> Self {
         let rastersize = format!("{}x{}", width, height);
-        self.0.set_str_attribute(::attrs::RASTERSIZE, rastersize);
+        self.set_str_attribute(::attrs::RASTERSIZE, rastersize);
         self
     }
 }
 
-impl_base_widget! { Dialog }
+impl_base_widget! { Dialog, Dialog, "dialog" }

@@ -17,15 +17,10 @@ impl Label {
         Label(BaseWidget::from_ptr(ptr))
     }
 
-    pub fn set_image(self, image: ::image::Image) -> Label {
-        // Deallocate the existing image if there is one.
-        self.get_attr_handle(::attrs::IMAGE)
-            .map(|img| img.destroy()); 
-
-        self.set_attr_handle(::attrs::IMAGE, image);
-
-        self
-    }
+    
 }
 
-impl_base_widget! { Label }
+impl_base_widget! { Label, Label, "label" }
+
+impl ::image::ImageContainer for Label {}
+

@@ -4,7 +4,7 @@ extern crate kiss_ui;
 
 use kiss_ui::container::Horizontal;
 use kiss_ui::dialog::Dialog;
-use kiss_ui::image::Image;
+use kiss_ui::image::{Image, ImageContainer};
 use kiss_ui::text::Label;
 
 use std::iter;
