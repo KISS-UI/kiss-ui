@@ -1,7 +1,5 @@
 use super::BaseWidget;
 
-use cstr_utils::{AsCStr, CStrPtr};
-
 #[derive(Copy, Clone)]
 pub enum VAlign {
     Top,
@@ -65,21 +63,24 @@ impl Horizontal {
         builder.add_child(unsafe { BaseWidget::null() });
 
         let mut raw_handles = builder.to_raw_handles();
-        let ptr = unsafe { ::iup_sys::IupHboxv(raw_handles.as_mut_ptr()) };
-        Horizontal(BaseWidget::from_ptr(ptr))
+        unsafe { 
+            let ptr = ::iup_sys::IupHboxv(raw_handles.as_mut_ptr());
+            Horizontal(BaseWidget::from_ptr(ptr))
+        }
     }
 
     pub fn set_valign(mut self, valign: VAlign) -> Self {
-        self.0.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_str());
+        self.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_str());
         self
     }
+
+    pub fn set_elem_spacing_pixels(mut self, spacing: u32) -> Self {
+        self.set_str_attribute(::attrs::GAP, spacing.to_string());
+        self
+    } 
 }
 
-impl Into<BaseWidget> for Horizontal {
-    fn into(self) -> BaseWidget {
-        self.0
-    }
-}
+impl_base_widget! { Horizontal, Horizontal, "hbox" }
 
 pub struct Vertical(BaseWidget);
 

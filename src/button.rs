@@ -1,8 +1,5 @@
 use super::BaseWidget;
 
-use callback::OnClick;
-
-use std::ffi::CString;
 use std::ptr;
 
 pub struct Button(BaseWidget);
@@ -24,3 +21,5 @@ impl Button {
 impl_base_widget! { Button, Button, "button" }
 
 impl_onclick! { Button }
+
+impl ::image::ImageContainer for Button {}

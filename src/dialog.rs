@@ -1,19 +1,15 @@
 use super::BaseWidget;
 
-use cstr_utils::AsCStr;
-
 use ::iup_sys;
-
-use std::convert::AsMut;
-use std::ffi::CString;
-use std::ptr;
 
 pub struct Dialog(BaseWidget);
 
 impl Dialog {
     pub fn new<W>(contents: W) -> Dialog where W: Into<BaseWidget> {
-        let ptr = unsafe { iup_sys::IupDialog(contents.into().0) };
-        Dialog(BaseWidget::from_ptr(ptr))
+        unsafe { 
+            let ptr = iup_sys::IupDialog(contents.into().0);
+            Dialog(BaseWidget::from_ptr(ptr))
+        }
     }
 
     pub fn set_title(mut self, title: &str) -> Self {

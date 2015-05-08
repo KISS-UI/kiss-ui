@@ -8,18 +8,21 @@ use kiss_ui::text::Label;
 
 fn main() {
     kiss_ui::show_gui(||
-        Dialog::new(Horizontal::new(|builder|{
-            builder.add_child(
-                Button::new()
-                    .set_label(Some("Click me!"))
-                    .set_onclick(show_new_dialog) 
-            )
-            .add_child(
-                Button::new()
-                    .set_label(Some("Close"))
-                    .set_onclick(close_dialog)
-            );
-        }))
+        Dialog::new(
+            Horizontal::new(|builder|{
+                builder.add_child(
+                    Button::new()
+                        .set_label(Some("Click me!"))
+                        .set_onclick(show_new_dialog) 
+                )
+                .add_child(
+                    Button::new()
+                        .set_label(Some("Close"))
+                        .set_onclick(close_dialog)
+                );
+            })
+            .set_elem_spacing_pixels(10)                   
+        )
         .set_title("Button test!")
         .set_size_pixels(140, 70)
     );

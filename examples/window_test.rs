@@ -1,6 +1,5 @@
 extern crate kiss_ui;
 
-use kiss_ui::BaseWidget;
 use kiss_ui::container::Horizontal;
 use kiss_ui::dialog::Dialog;
 use kiss_ui::text::Label;
