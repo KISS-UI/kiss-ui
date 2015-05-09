@@ -7,10 +7,10 @@ c_str_consts! {
     VALUE = "VALUE",
     ACTIVE = "ACTIVE",
     NAME = "NAME",
+    VISIBLE = "VISIBLE",
 
     // Rendering attributes
     RASTERSIZE = "RASTERSIZE",
-
 
     // Layout attributes
     ALIGNMENT_VERT = "ALIGNMENTLIN",
@@ -22,6 +22,16 @@ c_str_consts! {
     VISIBLE_COLUMNS = "VISIBLECOLUMNS",
     VISIBLE_LINES = "VISIBLELINES",
 
+    // Progressbar attributes
+    DASHED = "DASHED",
+    MARQUEE = "MARQUEE",
+    MIN = "MIN",
+    MAX = "MAX",
+
+    //Timer attribute
+    TIME = "TIME",
+    RUN = "RUN",
+
     // Spacing between elements in a container
     GAP = "GAP",
 
@@ -30,13 +40,17 @@ c_str_consts! {
 
     //Callbacks
     ACTION = "ACTION",
+    ACTION_CB = "ACTION_CB",
     VALUE_CHANGED_CB = "VALUECHANGED_CB",
+    MAP_CB = "MAP_CB",
 }
 
 pub mod values {
     c_str_consts! {
         YES = "YES",
         NO = "NO",
+        VERTICAL = "VERTICAL",
+        HORIZONTAL = "HORIZONTAL",
     }
 
     pub fn bool_yes_no(_bool: bool) -> &'static str {

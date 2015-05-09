@@ -99,7 +99,7 @@ impl Vertical {
     }
 
     pub fn set_halign(mut self, halign: HAlign) -> Self {
-        self.0.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_cstr());
+        self.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_cstr());
         self
     }
 
@@ -117,22 +117,24 @@ pub struct Grid(BaseWidget);
 
 impl Grid {
     pub fn set_valign(mut self, valign: VAlign) -> Self {
-        self.0.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_cstr());
+        self.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_cstr());
         self
     }
 
     pub fn set_halign(mut self, halign: HAlign) -> Self {
-        self.0.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_cstr());
+        self.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_cstr());
         self
     }
 
     pub fn set_vertical(mut self) -> Self {
-        self.0.set_const_str_attribute(::attrs::ORIENTATION, cstr!("VERTICAL"));
+        self.set_const_str_attribute(::attrs::ORIENTATION, ::attrs::values::VERTICAL);
         self
     }
 
     pub fn set_horizontal(mut self) -> Self {
-        self.0.set_const_str_attribute(::attrs::ORIENTATION, cstr!("HORIZONTAL"));
+        self.set_const_str_attribute(::attrs::ORIENTATION, ::attrs::values::HORIZONTAL);
         self
     }
 }
+
+impl_base_widget! { Grid, Grid, "matrix" }

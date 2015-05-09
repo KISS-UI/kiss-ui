@@ -34,11 +34,18 @@ macro_rules! impl_base_widget {
                 $classname
             }
         }
+
+        impl Clone for $ty {
+            fn clone(&self) -> Self {
+                $ty_cons(self.0.clone())
+            }
+        }
     )
 }
 
 #[macro_use]
 mod cstr;
+
 // Internal use modules
 mod attrs;
 
@@ -50,7 +57,9 @@ pub mod button;
 pub mod container;
 pub mod dialog;
 pub mod image;
+pub mod progress;
 pub mod text;
+pub mod timer;
 
 use cstr::AsCStr;
 
@@ -153,6 +162,14 @@ impl BaseWidget {
         (left, right)
     }
 
+    fn set_float_attribute(&mut self, name: &'static str, val: f32) {
+        unsafe { iup_sys::IupSetFloat(self.ptr(), name.as_cstr(), val); } 
+    }
+
+    fn get_float_attribute(&self, name: &'static str) -> f32 {
+        unsafe { iup_sys::IupGetFloat(self.ptr(), name.as_cstr()) }
+    }
+
     fn set_bool_attribute(&mut self, name: &'static str, val: bool) {
         let val = ::attrs::values::bool_yes_no(val);
         self.set_const_str_attribute(name, val);        
@@ -183,6 +200,10 @@ impl BaseWidget {
 
     pub fn hide(&mut self) {
         unsafe { iup_sys::IupHide(self.ptr()); }
+    }
+
+    pub fn set_visible(&mut self, visible: bool) {
+        self.set_bool_attribute(::attrs::VISIBLE, visible);
     }
 
     pub fn set_enabled(&mut self, enabled: bool) {
@@ -222,8 +243,30 @@ impl BaseWidget {
         }
     }
 
+    pub fn store(&self, name: &str) -> Option<BaseWidget> {
+        let name = CString::new(name).unwrap();
+        unsafe {
+           let ptr = iup_sys::IupSetHandle(name.as_ptr(), self.ptr());
+           BaseWidget::from_ptr_opt(ptr)
+        }
+    }
+
+    pub fn load(name: &str) -> Option<BaseWidget> {
+        let name = CString::new(name).unwrap();
+        unsafe { 
+            let ptr = iup_sys::IupGetHandle(name.as_ptr());
+            BaseWidget::from_ptr_opt(ptr)
+        }
+    }
+
     fn classname(&self) -> &CStr {
         unsafe { CStr::from_ptr(iup_sys::IupGetClassName(self.ptr())) } 
+    }
+}
+
+impl Clone for BaseWidget {
+    fn clone(&self) -> Self {
+        BaseWidget(self.0)
     }
 }
 

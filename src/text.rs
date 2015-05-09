@@ -49,21 +49,23 @@ impl TextBox {
         self
     }
 
+    pub fn set_visible_columns(mut self, cols: u32) -> Self {
+        self.set_int_attribute(::attrs::VISIBLE_COLUMNS, cols as i32);
+        self
+    }
+
+    pub fn set_visible_lines(mut self, lines: u32) -> Self {
+        self.set_int_attribute(::attrs::VISIBLE_LINES, lines as i32);
+        self
+    }
+
     pub fn set_text(&mut self, value: &str) {
         self.set_str_attribute(::attrs::VALUE, value);
     }
 
     pub fn get_text(&self) -> &str {
         self.get_str_attribute(::attrs::VALUE).unwrap_or("")
-    }
-
-    pub fn set_visible_columns(&mut self, cols: u32) {
-        self.set_int_attribute(::attrs::VISIBLE_COLUMNS, cols as i32);
-    }
-
-    pub fn set_visible_lines(&mut self, lines: u32) {
-        self.set_int_attribute(::attrs::VISIBLE_LINES, lines as i32);
-    }
+    }    
 }
 
 impl_base_widget! { TextBox, TextBox, "text" }

@@ -33,9 +33,13 @@ impl Dialog {
             BaseWidget::from_ptr_opt(child_ptr)
         }
     }
+
+
 }
 
 impl_base_widget! { Dialog, Dialog, "dialog" }
+
+impl_on_show! { Dialog }
 
 pub fn popup_message_dialog<T: Into<Vec<u8>>, M: Into<Vec<u8>>>(title: T, message: M) {
     let title = CString::new(title).unwrap();

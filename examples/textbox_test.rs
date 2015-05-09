@@ -12,9 +12,9 @@ fn main() {
             builder
                 .add_child(Label::new("Enter a message:"))
                 .add_child({
-                    let mut textbox = TextBox::new();
+                    let mut textbox = TextBox::new()
+                        .set_visible_columns(20);
                     textbox.set_name("my_textbox");
-                    textbox.set_visible_columns(20);
                     textbox
                 })
                 .add_child(

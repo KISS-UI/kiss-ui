@@ -104,3 +104,17 @@ macro_rules! impl_on_value_change {
     )
 }
 
+pub trait OnShow: DerefMut<Target=BaseWidget> + Sized {
+    fn set_on_show<F>(self, on_show: F) -> Self where F: FnMut(Self) + 'static;
+}
+
+macro_rules! impl_on_show {
+    ($self_ty:ty) => (
+        impl ::callback::OnShow for $self_ty {
+            fn set_on_show<F>(mut self, on_show: F) -> Self where F: FnMut(Self) + 'static {
+                callback_impl! { ::attrs::MAP_CB, self, on_show, $self_ty }
+                self
+            }
+        }
+    )
+}
