@@ -44,7 +44,7 @@ macro_rules! impl_base_widget {
 }
 
 #[macro_use]
-mod cstr;
+pub mod utils;
 
 // Internal use modules
 mod attrs;
@@ -61,7 +61,7 @@ pub mod progress;
 pub mod text;
 pub mod timer;
 
-use cstr::AsCStr;
+use utils::cstr::AsCStr;
 
 use std::ffi::{CStr, CString};
 use std::ptr;
