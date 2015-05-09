@@ -58,7 +58,7 @@ pub struct Horizontal(BaseWidget);
 
 impl Horizontal {
     pub fn new<F>(build_fn: F) -> Horizontal where F: FnOnce(&mut ContainerBuilder) {
-        let mut builder = Default::default();
+        let mut builder = ContainerBuilder::default();
         build_fn(&mut builder);
         builder.add_child(unsafe { BaseWidget::null() });
 
@@ -85,11 +85,33 @@ impl_base_widget! { Horizontal, Horizontal, "hbox" }
 pub struct Vertical(BaseWidget);
 
 impl Vertical {
+    pub fn new<F>(build_fn: F) -> Vertical where F: FnOnce(&mut ContainerBuilder) {
+        let mut builder = ContainerBuilder::default();
+        build_fn(&mut builder);
+        builder.add_child(unsafe { BaseWidget::null() });
+
+        let mut raw_handles = builder.to_raw_handles();
+
+        unsafe {
+            let ptr = ::iup_sys::IupVboxv(raw_handles.as_mut_ptr());
+            Vertical(BaseWidget::from_ptr(ptr))
+        }
+    }
+
     pub fn set_halign(mut self, halign: HAlign) -> Self {
         self.0.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_str());
         self
     }
+
+    pub fn set_elem_spacing_pixels(mut self, spacing: u32) -> Self {
+        self.set_str_attribute(::attrs::GAP, spacing.to_string());
+        self
+    }
 }
+
+
+
+impl_base_widget! { Vertical, Vertical, "vbox" }
 
 pub struct Grid(BaseWidget);
 

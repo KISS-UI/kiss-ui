@@ -68,4 +68,5 @@ impl TextBox {
 
 impl_base_widget! { TextBox, TextBox, "text" }
 
-impl_on_value_change! { TextBox } 
+impl_on_value_change! { TextBox }
+

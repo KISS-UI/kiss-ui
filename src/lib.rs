@@ -200,6 +200,27 @@ impl BaseWidget {
         T::try_downcast(self) 
     }
 
+    pub fn get_sibling(&self) -> Option<BaseWidget> {
+        unsafe {
+            let ptr = iup_sys::IupGetBrother(self.ptr());
+            Self::from_ptr_opt(ptr)
+        }
+    }
+
+    pub fn get_parent(&self) -> Option<BaseWidget> {
+        unsafe {
+            let ptr = iup_sys::IupGetParent(self.ptr());
+            Self::from_ptr_opt(ptr)
+        }
+    }
+
+    pub fn get_dialog(&self) -> Option<dialog::Dialog> {
+        unsafe {
+            let ptr = iup_sys::IupGetDialog(self.ptr());
+            Self::from_ptr_opt(ptr).map(|base| dialog::Dialog::downcast(base))
+        }
+    }
+
     fn classname(&self) -> &CStr {
         unsafe { CStr::from_ptr(iup_sys::IupGetClassName(self.ptr())) } 
     }
