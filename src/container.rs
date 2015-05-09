@@ -8,13 +8,13 @@ pub enum VAlign {
 }
 
 impl VAlign {
-    fn as_str(self) -> &'static str {
+    fn as_cstr(self) -> &'static str {
         use self::VAlign::*;
 
         match self {
-            Top => "ATOP\0",
-            Center => "ACENTER\0",
-            Bottom => "ABOTTOM\0",
+            Top => cstr!("ATOP"),
+            Center => cstr!("ACENTER"),
+            Bottom => cstr!("ABOTTOM"),
         }
     }
 }
@@ -27,13 +27,13 @@ pub enum HAlign {
 }
 
 impl HAlign {
-    fn as_str(self) -> &'static str {
+    fn as_cstr(self) -> &'static str {
         use self::HAlign::*;
 
         match self {
-            Left => "ALEFT\0",
-            Center => "ACENTER\0",
-            Right => "ARIGHT\0",
+            Left => cstr!("ALEFT"),
+            Center => cstr!("ACENTER"),
+            Right => cstr!("ARIGHT"),
         }
     }
 }
@@ -70,7 +70,7 @@ impl Horizontal {
     }
 
     pub fn set_valign(mut self, valign: VAlign) -> Self {
-        self.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_str());
+        self.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_cstr());
         self
     }
 
@@ -99,7 +99,7 @@ impl Vertical {
     }
 
     pub fn set_halign(mut self, halign: HAlign) -> Self {
-        self.0.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_str());
+        self.0.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_cstr());
         self
     }
 
@@ -117,22 +117,22 @@ pub struct Grid(BaseWidget);
 
 impl Grid {
     pub fn set_valign(mut self, valign: VAlign) -> Self {
-        self.0.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_str());
+        self.0.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_cstr());
         self
     }
 
     pub fn set_halign(mut self, halign: HAlign) -> Self {
-        self.0.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_str());
+        self.0.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_cstr());
         self
     }
 
     pub fn set_vertical(mut self) -> Self {
-        self.0.set_const_str_attribute(::attrs::ORIENTATION, "VERTICAL\0");
+        self.0.set_const_str_attribute(::attrs::ORIENTATION, cstr!("VERTICAL"));
         self
     }
 
     pub fn set_horizontal(mut self) -> Self {
-        self.0.set_const_str_attribute(::attrs::ORIENTATION, "HORIZONTAL\0");
+        self.0.set_const_str_attribute(::attrs::ORIENTATION, cstr!("HORIZONTAL"));
         self
     }
 }

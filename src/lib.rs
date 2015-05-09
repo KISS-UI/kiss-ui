@@ -37,9 +37,10 @@ macro_rules! impl_base_widget {
     )
 }
 
+#[macro_use]
+mod cstr;
 // Internal use modules
 mod attrs;
-mod cstr_utils;
 
 // User-facing modules
 #[macro_use]
@@ -51,7 +52,7 @@ pub mod dialog;
 pub mod image;
 pub mod text;
 
-use cstr_utils::AsCStr;
+use cstr::AsCStr;
 
 use std::ffi::{CStr, CString};
 use std::ptr;

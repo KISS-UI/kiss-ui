@@ -1,15 +1,3 @@
-macro_rules! c_str_const (
-    ($name:ident = $val:expr) => (
-        pub const $name: &'static str = concat!($val, "\0");
-    )
-);
-
-macro_rules! c_str_consts {
-    ($($name:ident = $val:expr),+,) => (
-        $(c_str_const!($name = $val);)+
-    )
-}
-
 c_str_consts! {
     //Globals
     UTF8_MODE = "UTF8MODE",
