@@ -35,14 +35,24 @@ impl CallbackStatus {
     }
 }
 
+pub trait Callback<Args>: 'static {
+    fn on_callback(&mut self, args: Args); 
+}
+
+impl<Args, F: FnMut<Args, Output=()> + 'static> Callback<Args> for F {
+    fn on_callback(&mut self, args: Args) {
+        self.call_mut(args);
+    }
+}
+
 #[doc(hidden)]
-pub type CallbackMap<T> = RefCell<HashMap<*mut Ihandle, Box<FnMut(T) + 'static>>>;
+pub type CallbackMap<T> = RefCell<HashMap<*mut Ihandle, Box<Callback<T>>>>;
 
 macro_rules! callback_impl {
     ($cb_attr:expr, $base:expr, $callback:expr, $self_ty:ty) => (
         { 
             thread_local!(
-                static CALLBACKS: $crate::callback::CallbackMap<$self_ty> = 
+                static CALLBACKS: $crate::callback::CallbackMap<($self_ty,)> = 
                     ::std::cell::RefCell::new(::std::collections::HashMap::new())
             );
 
@@ -57,7 +67,7 @@ macro_rules! callback_impl {
                         CALLBACKS.with(|callbacks| 
                             callbacks.borrow_mut()
                                 .get_mut(&_self.ptr())
-                                .map(|cb| cb(_self))
+                                .map(|cb| cb.on_callback((_self,)))
                         )
                     );
                 }
@@ -75,13 +85,13 @@ macro_rules! callback_impl {
 }
 
 pub trait OnClick: DerefMut<Target=BaseWidget> + Sized {
-    fn set_onclick<F>(self, on_click: F) -> Self where F: FnMut(Self) + 'static;
+    fn set_onclick<Cb>(self, on_click: Cb) -> Self where Cb: Callback<(Self,)>;
 }
 
 macro_rules! impl_onclick {
     ($self_ty:ty) => (
         impl $crate::callback::OnClick for $self_ty {
-            fn set_onclick<F>(mut self, on_click: F) -> Self where F: FnMut(Self) + 'static {
+            fn set_onclick<Cb>(mut self, on_click: Cb) -> Self where Cb: ::callback::Callback<(Self,)> {
                 callback_impl! { $crate::attrs::ACTION, self, on_click, $self_ty }
                 self
             }
@@ -90,13 +100,13 @@ macro_rules! impl_onclick {
 }
 
 pub trait OnValueChange: DerefMut<Target=BaseWidget> + Sized {
-    fn set_on_value_changed<F>(self, on_value_chaged: F) -> Self where F: FnMut(Self) + 'static;
+    fn set_on_value_changed<Cb>(self, on_value_chaged: Cb) -> Self where Cb: Callback<(Self,)>;
 }
 
 macro_rules! impl_on_value_change {
     ($self_ty:ty) => (
         impl $crate::callback::OnValueChange for $self_ty {
-            fn set_on_value_changed<F>(mut self, on_value_changed: F) -> Self where F: FnMut(Self) + 'static {
+            fn set_on_value_changed<Cb>(mut self, on_value_changed: Cb) -> Self where Cb: ::callback::Callback<(Self,)> {
                 callback_impl! { $crate::attrs::VALUE_CHANGED_CB, self, on_value_changed, $self_ty }
                 self
             }
@@ -105,13 +115,13 @@ macro_rules! impl_on_value_change {
 }
 
 pub trait OnShow: DerefMut<Target=BaseWidget> + Sized {
-    fn set_on_show<F>(self, on_show: F) -> Self where F: FnMut(Self) + 'static;
+    fn set_on_show<Cb>(self, on_show: Cb) -> Self where Cb: Callback<(Self,)>;
 }
 
 macro_rules! impl_on_show {
     ($self_ty:ty) => (
         impl ::callback::OnShow for $self_ty {
-            fn set_on_show<F>(mut self, on_show: F) -> Self where F: FnMut(Self) + 'static {
+            fn set_on_show<Cb>(mut self, on_show: Cb) -> Self where Cb: ::callback::Callback<(Self,)> {
                 callback_impl! { ::attrs::MAP_CB, self, on_show, $self_ty }
                 self
             }

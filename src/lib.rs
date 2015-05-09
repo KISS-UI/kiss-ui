@@ -1,4 +1,4 @@
-#![feature(associated_consts, collections, libc, scoped_tls)]
+#![feature(associated_consts, collections, core, libc, scoped_tls, unboxed_closures)]
 
 extern crate libc;
 extern crate iup_sys;

@@ -1,4 +1,5 @@
 use ::BaseWidget;
+use ::callback::Callback;
 
 pub struct Timer(BaseWidget);
 
@@ -15,7 +16,7 @@ impl Timer {
         self
     }
 
-    pub fn set_on_interval<F>(mut self, on_interval: F) -> Self where F: FnMut(Self) + 'static {
+    pub fn set_on_interval<Cb>(mut self, on_interval: Cb) -> Self where Cb: Callback<(Self,)> {
        callback_impl! { ::attrs::ACTION_CB, self, on_interval, Timer }
        self
     }
