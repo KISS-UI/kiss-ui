@@ -9,19 +9,6 @@ impl<T> MoveCell<T> {
         MoveCell(UnsafeCell::new(None))
     }
 
-    pub fn put(&self, val: T) -> Option<T> {
-        let mut_ref = unsafe { self.as_mut() };
-        mem::replace(mut_ref, Some(val))       
-    }
-
-    pub fn take(&self) -> Option<T> {
-        unsafe { self.as_mut() }.take()
-    }
-
-    pub fn clone_inner(&self) -> Option<T> where T: Clone {
-        unsafe { self.as_ref() }.clone()
-    }
-
     unsafe fn as_mut(&self) -> &mut Option<T> {
         &mut *self.0.get()
     }
@@ -30,8 +17,22 @@ impl<T> MoveCell<T> {
         & *self.0.get()
     }
 
+    pub fn put(&self, val: T) -> Option<T> {
+        mem::replace(unsafe { self.as_mut() }, Some(val))       
+    }
+
+    pub fn take(&self) -> Option<T> {
+        unsafe { self.as_mut().take() }
+    }
+
+    pub fn clone_inner(&self) -> Option<T> where T: Clone {
+        let inner = self.take();
+        inner.clone().map(|inner| self.put(inner));
+        inner
+    }
+
     pub fn has_value(&self) -> bool {
-        unsafe { self.as_ref() }.is_some()
+        unsafe { self.as_ref().is_some() }
     }
 }
 
