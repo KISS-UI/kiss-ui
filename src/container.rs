@@ -1,5 +1,10 @@
+//! Assorted types that can contain multiple widgets.
+//!
+//! All container types can be nested.
+
 use super::BaseWidget;
 
+/// Vertical alignment setting, used by `Horizontal` and `Grid`.
 #[derive(Copy, Clone)]
 pub enum VAlign {
     Top,
@@ -19,6 +24,7 @@ impl VAlign {
     }
 }
 
+/// Horizontal alignment setting, used by `Vertical` and `Grid`.
 #[derive(Copy, Clone)]
 pub enum HAlign {
     Left,
@@ -38,31 +44,23 @@ impl HAlign {
     }
 }
 
-#[derive(Default)]
-pub struct ContainerBuilder(Vec<BaseWidget>);
-
-impl ContainerBuilder {
-    pub fn add_child<W: Into<BaseWidget>>(&mut self, child: W) -> &mut Self {
-        self.0.push(child.into());
-        self
-    }
-
-    fn to_raw_handles(self) -> Vec<*mut ::iup_sys::Ihandle> {
-        self.0.map_in_place(|val| val.0)
-    }
+fn raw_handle_vec<B>(widgets: B) -> Vec<*mut ::iup_sys::Ihandle> where B: AsRef<[BaseWidget]> {
+    let mut raw_handles: Vec<_> = widgets.as_ref().iter().map(|child| child.0).collect();
+    raw_handles.push(::std::ptr::null_mut());
+    raw_handles
 }
 
+/// A container type that makes no effort to arrange its children. Instead, they must be positioned
+/// manually.
 pub struct Absolute(BaseWidget);
 
+/// A container widget that lines up its children from left to right.
 pub struct Horizontal(BaseWidget);
 
 impl Horizontal {
-    pub fn new<F>(build_fn: F) -> Horizontal where F: FnOnce(&mut ContainerBuilder) {
-        let mut builder = ContainerBuilder::default();
-        build_fn(&mut builder);
-        builder.add_child(unsafe { BaseWidget::null() });
+    pub fn new<C>(children: C) -> Horizontal where C: AsRef<[BaseWidget]> {
+        let mut raw_handles = raw_handle_vec(children);
 
-        let mut raw_handles = builder.to_raw_handles();
         unsafe { 
             let ptr = ::iup_sys::IupHboxv(raw_handles.as_mut_ptr());
             Horizontal(BaseWidget::from_ptr(ptr))
@@ -82,15 +80,12 @@ impl Horizontal {
 
 impl_base_widget! { Horizontal, Horizontal, "hbox" }
 
+/// A container widget that lines up its children from top to bottom.
 pub struct Vertical(BaseWidget);
 
 impl Vertical {
-    pub fn new<F>(build_fn: F) -> Vertical where F: FnOnce(&mut ContainerBuilder) {
-        let mut builder = ContainerBuilder::default();
-        build_fn(&mut builder);
-        builder.add_child(unsafe { BaseWidget::null() });
-
-        let mut raw_handles = builder.to_raw_handles();
+    pub fn new<C>(children: C) -> Vertical where C: AsRef<[BaseWidget]> {
+       let mut raw_handles = raw_handle_vec(children); 
 
         unsafe {
             let ptr = ::iup_sys::IupVboxv(raw_handles.as_mut_ptr());
@@ -110,9 +105,9 @@ impl Vertical {
 }
 
 
-
 impl_base_widget! { Vertical, Vertical, "vbox" }
 
+/// A container widget that lines up its children from left to right, and from top to bottom.
 pub struct Grid(BaseWidget);
 
 impl Grid {
@@ -138,3 +133,17 @@ impl Grid {
 }
 
 impl_base_widget! { Grid, Grid, "matrix" }
+
+/// Convert a list of widgets into an array of `BaseWidget`.
+/// Suitable for passing to any function that takes `AsRef<[BaseWidget]>`.
+///
+/// ##Note
+/// If you are getting an error saying `[BaseWidget; <integer>] does not implement
+/// AsRef<[BaseWidget]>`, then this array is too large (`AsRef<[T]>` is only implemented for
+/// arrays up to size `[T; 32]`). To fix this, call `.to_owned()` on the result to convert it to
+/// `Vec<BaseWidget>`, which will work for any size. 
+#[macro_export]
+macro_rules! children [
+    ($($child:expr),+,) => ([$($child.into()),+]);
+    () => ([]);
+];

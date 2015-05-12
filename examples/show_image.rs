@@ -1,5 +1,6 @@
 #![feature(core)]
 
+#[macro_use]
 extern crate kiss_ui;
 
 use kiss_ui::container::Horizontal;
@@ -22,12 +23,14 @@ fn main() {
         .collect();
 
     kiss_ui::show_gui(|| {
-        Dialog::new(Horizontal::new(|builder|{
-            builder.add_child(
-                Label::new("")
-                    .set_image(Image::new_rgb(WIDTH, HEIGHT, &image_data))
-            );
-        }))
+        Dialog::new(
+            Horizontal::new(
+                children![
+                    Label::new("")
+                        .set_image(Image::new_rgb(WIDTH, HEIGHT, &image_data)),
+                ]
+            )
+        )
         .set_title("Image!")
     });
 }

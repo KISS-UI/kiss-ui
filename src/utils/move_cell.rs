@@ -1,6 +1,7 @@
 use std::cell::UnsafeCell;
 use std::mem;
 
+/// A cell type that can move values into and out of a shared reference.
 pub struct MoveCell<T>(UnsafeCell<Option<T>>);
 
 impl<T> MoveCell<T> {

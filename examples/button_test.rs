@@ -1,3 +1,4 @@
+#[macro_use]
 extern crate kiss_ui;
 
 use kiss_ui::button::Button;
@@ -9,18 +10,16 @@ use kiss_ui::text::Label;
 fn main() {
     kiss_ui::show_gui(||
         Dialog::new(
-            Horizontal::new(|builder|{
-                builder.add_child(
+            Horizontal::new(
+                children![               
                     Button::new()
                         .set_label(Some("Click me!"))
-                        .set_onclick(show_new_dialog) 
-                )
-                .add_child(
+                        .set_onclick(show_new_dialog),
                     Button::new()
                         .set_label(Some("Close"))
-                        .set_onclick(close_dialog)
-                );
-            })
+                        .set_onclick(close_dialog),
+                ]
+            )
             .set_elem_spacing_pixels(10)                   
         )
         .set_title("Button test!")

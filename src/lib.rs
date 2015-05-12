@@ -1,4 +1,31 @@
-#![feature(associated_consts, collections, core, libc, scoped_tls, unboxed_closures)]
+//! A UI framework for Rust based on the KISS principle: "Keep It Simple, Stupid!"
+//!
+//! Built on top of the [IUP GUI library for C.][iup]
+//!
+//! ##Note: "valid KISS-UI context"
+//! All KISS-UI static widget methods will panic if called before `kiss_ui::show_gui()` is invoked or
+//! after it returns. 
+//!
+//! This is because the underlying IUP library has been either, respectively, not initialized yet 
+//! or already deinitialized, and attempting to interact with it in either situation will likely cause
+//! undefined behavior.
+//!
+//! ##Note: This is a (technically) leaky abstraction.
+//! Because IUP only frees all its allocations when it is deinitialized, all widgets created by KISS-UI
+//! will remain in-memory until `kiss_ui::show_gui()` returns. While unbounded memory growth can
+//! happen with complex applications, this should not be an issue for most use-cases.
+//!
+//! However, some types *do* allocate large chunks of memory, or other valuable system resources, 
+//! and should be manually freed when they are no longer being used. 
+//! This is most evident with the `Image` struct, which can allocate large backing buffers for image data.
+//!
+//! All types that should be manually freed expose a `.destroy()` method which should be called
+//! when they are no longer being used. This can safely be called multiple times on clones of the
+//! widget types^([citation needed]).
+//!
+//! [iup]: http://webserver2.tecgraf.puc-rio.br/iup/
+
+#![feature(core, libc, scoped_tls, unboxed_closures)]
 
 extern crate libc;
 extern crate iup_sys;
@@ -25,7 +52,7 @@ macro_rules! impl_base_widget {
             }
         }
 
-        impl ::Downcast for $ty {
+        impl ::_Downcast for $ty {
             unsafe fn downcast(base: ::BaseWidget) -> $ty {
                 $ty_cons(base)
             }
@@ -42,6 +69,15 @@ macro_rules! impl_base_widget {
         }
     )
 }
+
+macro_rules! assert_kiss_running (
+    () => (
+        assert!(
+            ::kiss_running(), 
+            "No KISS-UI widget methods may be called before `kiss_ui::show_gui()` is invoked or after it returns!"
+        )
+    )
+);
 
 #[macro_use]
 pub mod utils;
@@ -61,224 +97,68 @@ pub mod progress;
 pub mod text;
 pub mod timer;
 
-use utils::cstr::AsCStr;
+use std::cell::{Cell, RefCell};
+use std::collections::HashMap;
 
-use std::ffi::{CStr, CString};
-use std::ptr;
-
-pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> dialog::Dialog {
+/// The entry point for KISS-UI. The closure argument should initialize and return the main window
+/// dialog, at which point `.show()` will be called on it and the IUP event loop will begin
+/// running.
+///
+/// ##Blocks
+/// Until all KISS-UI dialogs are closed.
+///
+/// ##Warning
+/// No static widget methods from this crate may be called before this function is
+/// invoked or after it returns, with the exception of the closure passed to this function.
+///
+/// While this function is blocked and the IUP event loop is running, any reachable code is
+/// considered a "valid KISS-UI context" and may create and interact with widgets and dialogs.
+///
+/// After it returns, IUP is deinitialized and all static widget methods will panic to avoid
+/// undefined behavior.
+///
+/// ##Note: `Send` bound
+/// This closure will be called in the same thread where `show_gui()` is invoked. No threading is
+/// involved.
+/// 
+/// However, without the `Send` bound it would be possible to move widget types outside
+/// of the closure with safe code and interact with them after IUP has been deinitialized, 
+/// which would cause undefined behavior. 
+///
+/// Since no widget types are `Send`, this bound prevents this from happening without requiring
+/// all widget methods to check if they were invoked in a valid context.
+pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> dialog::Dialog + Send {
     unsafe { 
         assert!(iup_sys::IupOpen(ptr::null(), ptr::null()) == 0);
         // Force IUP to always use UTF-8
         iup_sys::IupSetGlobal(::attrs::UTF8_MODE.as_cstr(), ::attrs::values::YES.as_cstr());
     }
 
-    init_fn().show();
+    KISS_RUNNING.with(|state| state.set(true));
 
-    unsafe { 
-        iup_sys::IupMainLoop();
-        iup_sys::IupClose();
-    }
-}
+    let widget_store = RefCell::new(HashMap::new());
 
-// This struct is defined here so its private methods are available to submodules
-
-pub struct BaseWidget(*mut iup_sys::Ihandle);
-
-impl BaseWidget {
-    pub unsafe fn null() -> BaseWidget {
-        BaseWidget(ptr::null_mut())
-    }
-
-    pub unsafe fn from_ptr(ptr: *mut iup_sys::Ihandle) -> BaseWidget {
-        assert!(!ptr.is_null());
-        BaseWidget(ptr)
-    }
-
-    pub unsafe fn from_ptr_opt(ptr: *mut iup_sys::Ihandle) -> Option<BaseWidget> {
-        if !ptr.is_null() {
-            Some(BaseWidget(ptr))
-        } else {
-            None
-        }
-    }
-
-    fn ptr(&self) -> *mut iup_sys::Ihandle {
-        self.0
-    } 
-
-    fn set_str_attribute<V>(&mut self, name: &'static str, val: V) where V: Into<Vec<u8>> {
-        let c_val = CString::new(val).unwrap();
-        unsafe { iup_sys::IupSetStrAttribute(self.ptr(), name.as_cstr(), c_val.as_ptr()); }
-    }
-
-    fn set_opt_str_attribute<V>(&mut self, name: &'static str, val: Option<V>) where V: Into<Vec<u8>> {
-        let c_val = val.map(CString::new).map(Result::unwrap);
-        unsafe { 
-            iup_sys::IupSetStrAttribute(
-                self.ptr(),
-                name.as_cstr(),
-                // This looks backwards, but check the docs. It's right.
-                c_val.as_ref().map_or_else(ptr::null, |c_val| c_val.as_ptr())
-            )
-        }
-    }
-
-    fn set_const_str_attribute(&mut self, name: &'static str, val: &'static str) {
-        unsafe { iup_sys::IupSetAttribute(self.ptr(), name.as_cstr(), val.as_cstr()); }
-    }
-
-    fn get_str_attribute(&self, name: &'static str) -> Option<&str> {
-        let ptr = unsafe { iup_sys::IupGetAttribute(self.ptr(), name.as_cstr()) };
-
-        if !ptr.is_null() {
-            unsafe {
-                // Safe since we're controlling the lifetime
-                let c_str = CStr::from_ptr(ptr);
-                // We're forcing IUP to use UTF-8 
-                Some(::std::str::from_utf8_unchecked(c_str.to_bytes()))
-            }
-        } else {
-            None
-        }
-    }
-
-    fn set_int_attribute(&mut self, name: &'static str, val: i32) {
-        unsafe { iup_sys::IupSetInt(self.ptr(), name.as_cstr(), val); }
-    }
-
-    fn get_int_attribute(&self, name: &'static str) -> i32 {
-        unsafe { iup_sys::IupGetInt(self.ptr(), name.as_cstr()) }
-    }
-
-    fn get_int2_attribute(&self, name: &'static str) -> (i32, i32) {
-        let mut left = 0;
-        let mut right = 0;
+    WIDGET_STORE.set(&widget_store, || {
+        init_fn().show();
 
         unsafe { 
-            assert!(iup_sys::IupGetIntInt(self.ptr(), name.as_cstr(), &mut left, &mut right) != 0); 
+            iup_sys::IupMainLoop();
+            iup_sys::IupClose();
         }
-
-        (left, right)
-    }
-
-    fn set_float_attribute(&mut self, name: &'static str, val: f32) {
-        unsafe { iup_sys::IupSetFloat(self.ptr(), name.as_cstr(), val); } 
-    }
-
-    fn get_float_attribute(&self, name: &'static str) -> f32 {
-        unsafe { iup_sys::IupGetFloat(self.ptr(), name.as_cstr()) }
-    }
-
-    fn set_bool_attribute(&mut self, name: &'static str, val: bool) {
-        let val = ::attrs::values::bool_yes_no(val);
-        self.set_const_str_attribute(name, val);        
-    }
-
-    fn set_attr_handle<H: Into<BaseWidget>>(&self, name: &'static str, handle: H) {
-        unsafe { iup_sys::IupSetAttributeHandle(self.ptr(), name.as_cstr(), handle.into().ptr()); }
-    }
-
-    fn get_attr_handle(&self, name: &'static str) -> Option<BaseWidget> {
-        unsafe { 
-            let existing = iup_sys::IupGetAttributeHandle(self.ptr(), name.as_cstr());
-            BaseWidget::from_ptr_opt(existing)
-        }
-    }
-
-    fn set_callback(&mut self, name: &'static str, callback: ::iup_sys::Icallback) {
-        unsafe { iup_sys::IupSetCallback(self.ptr(), name.as_cstr(), callback); } 
-    } 
-
-    fn destroy(self) {
-        unsafe { iup_sys::IupDestroy(self.ptr()); }
-    }
-
-    pub fn show(&mut self) {
-        unsafe { iup_sys::IupShow(self.ptr()); }
-    }
-
-    pub fn hide(&mut self) {
-        unsafe { iup_sys::IupHide(self.ptr()); }
-    }
-
-    pub fn set_visible(&mut self, visible: bool) {
-        self.set_bool_attribute(::attrs::VISIBLE, visible);
-    }
-
-    pub fn set_enabled(&mut self, enabled: bool) {
-        self.set_bool_attribute(::attrs::ACTIVE, enabled);
-    }
-
-    pub fn set_name(&mut self, name: &str) {
-        self.set_str_attribute(::attrs::NAME, name);
-    }
-
-    pub fn get_name(&self) -> Option<&str> {
-        self.get_str_attribute(::attrs::NAME) 
-    }
-
-    pub fn try_downcast<T>(self) -> Result<T, Self> where T: Downcast {
-        T::try_downcast(self) 
-    }
-
-    pub fn get_sibling(&self) -> Option<BaseWidget> {
-        unsafe {
-            let ptr = iup_sys::IupGetBrother(self.ptr());
-            Self::from_ptr_opt(ptr)
-        }
-    }
-
-    pub fn get_parent(&self) -> Option<BaseWidget> {
-        unsafe {
-            let ptr = iup_sys::IupGetParent(self.ptr());
-            Self::from_ptr_opt(ptr)
-        }
-    }
-
-    pub fn get_dialog(&self) -> Option<dialog::Dialog> {
-        unsafe {
-            let ptr = iup_sys::IupGetDialog(self.ptr());
-            Self::from_ptr_opt(ptr).map(|base| dialog::Dialog::downcast(base))
-        }
-    }
-
-    pub fn store(&self, name: &str) -> Option<BaseWidget> {
-        let name = CString::new(name).unwrap();
-        unsafe {
-           let ptr = iup_sys::IupSetHandle(name.as_ptr(), self.ptr());
-           BaseWidget::from_ptr_opt(ptr)
-        }
-    }
-
-    pub fn load(name: &str) -> Option<BaseWidget> {
-        let name = CString::new(name).unwrap();
-        unsafe { 
-            let ptr = iup_sys::IupGetHandle(name.as_ptr());
-            BaseWidget::from_ptr_opt(ptr)
-        }
-    }
-
-    fn classname(&self) -> &CStr {
-        unsafe { CStr::from_ptr(iup_sys::IupGetClassName(self.ptr())) } 
-    }
+    });
 }
 
-impl Clone for BaseWidget {
-    fn clone(&self) -> Self {
-        BaseWidget(self.0)
-    }
+fn kiss_running() -> bool {
+    KISS_RUNNING.with(|state| state.get())
 }
 
-pub trait Downcast: Into<BaseWidget> {
-    fn try_downcast(base: BaseWidget) -> Result<Self, BaseWidget> {
-        if Self::classname().as_bytes() == base.classname().to_bytes() {
-            Ok(unsafe { Self::downcast(base) })
-        } else {
-            Err(base)
-        }
-    }
+thread_local! { static KISS_RUNNING: Cell<bool> = Cell::new(false) }
 
-    unsafe fn downcast(base: BaseWidget) -> Self;
-    fn classname() -> &'static str;
-}
+scoped_thread_local! { static WIDGET_STORE: RefCell<HashMap<String, BaseWidget>> } 
+
+// base.rs cannot be a regular module because `BaseWidget` defines many private methods that other
+// modules need to access but external users shouldn't.
+//
+// So, instead, we inline it here so submodules can access the private methods 
+// while it remains a separate source file.
+include!("base.rs");

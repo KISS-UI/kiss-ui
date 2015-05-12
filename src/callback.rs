@@ -1,3 +1,5 @@
+//! Traits for notifying client code when the state of a KISS-UI widget is updated.
+
 use super::BaseWidget;
 
 use iup_sys::{Ihandle, CallbackReturn};
@@ -9,15 +11,26 @@ use std::ops::DerefMut;
 #[doc(hidden)]
 scoped_thread_local!(pub static CB_RETURN: Cell<CallbackStatus>);
 
+/// Set this within a callback to tell the framework if it should close or not.
+///
+/// If `Callback::close.set()` is called within a callback, then when the callback returns,
+/// the dialog containing the widget on which the callback was invoked will be closed.
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum CallbackStatus {
     //Ignore,
+    /// The default `CallbackStatus`, does nothing when set.
     Default,
+    /// If this is set within a callback, then when the callback returns the dialog containing the
+    /// widget on which the callback was invoked will be closed.
     Close,
     //Continue,
 }
 
 impl CallbackStatus {
+    /// Set this `CallbackStatus` within a callback.
+    ///
+    /// ##Panics
+    /// If this is called outside of a KISS-UI callback.
     pub fn set(self) {
         assert!(CB_RETURN.is_set(), "CallbackStatus cannot be set outside of a callback!");
         CB_RETURN.with(|cb_ret| cb_ret.set(self));         
@@ -84,6 +97,7 @@ macro_rules! callback_impl {
     )
 }
 
+/// A trait describing a widget that can be clicked, and can notify client code when this occurs.
 pub trait OnClick: DerefMut<Target=BaseWidget> + Sized {
     fn set_onclick<Cb>(self, on_click: Cb) -> Self where Cb: Callback<(Self,)>;
 }
@@ -99,6 +113,8 @@ macro_rules! impl_onclick {
     )
 }
 
+/// A trait describing a widget which has a value that can be changed by the user, and can notify
+/// client code when this occurs.
 pub trait OnValueChange: DerefMut<Target=BaseWidget> + Sized {
     fn set_on_value_changed<Cb>(self, on_value_chaged: Cb) -> Self where Cb: Callback<(Self,)>;
 }
@@ -114,6 +130,7 @@ macro_rules! impl_on_value_change {
     )
 }
 
+/// A trait describing a widget that can be shown, and can notify client code when this occurs.
 pub trait OnShow: DerefMut<Target=BaseWidget> + Sized {
     fn set_on_show<Cb>(self, on_show: Cb) -> Self where Cb: Callback<(Self,)>;
 }
