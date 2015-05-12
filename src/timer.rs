@@ -2,7 +2,7 @@
 use ::BaseWidget;
 use ::callback::Callback;
 
-/// Create a timer that can invoke a callback on a configurable interval.
+/// A timer that can invoke a callback on a configurable interval.
 /// 
 /// ##Note: Not a Renderable Widget
 /// While this type can be dereferenced and converted to `BaseWidget`, it is *not* a renderable

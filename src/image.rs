@@ -88,12 +88,15 @@ pub fn transmute_buffer_rgba(buf: &[u8]) -> Option<&[(u8, u8, u8, u8)]> {
 
 impl_base_widget!{ Image, Image, "image" }
 
+/// A trait describing an object that can render an image within itself.
 pub trait ImageContainer: DerefMut<Target=BaseWidget> + Sized {
+    /// Set the image this widget is to render and return `self` for method chaining.
     fn set_image(self, image: Image) -> Self {
         self.set_attr_handle(::attrs::IMAGE, image);
         self
     }
 
+    /// Get a copy of the image set on this widget, if any.
     fn get_image(&self) -> Option<Image> {
         self.get_attr_handle(::attrs::IMAGE).map(Image)
     }
