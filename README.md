@@ -15,9 +15,9 @@ Contents
 
 * [Documentation](#documentation)
 * [Usage](#usage)
-* [Installing IUP Binaries][#installing-iup-binaries]
-* [Comparison to Other UI Frameworks][#comparison-to-other-ui-frameworks]
-* [Enabling Visual Styles on Windows][#enabling-visual-styles-on-windows]
+* [Installing IUP Binaries](#installing-iup-binaries)
+* [Comparison to Other UI Frameworks](#comparison-to-other-ui-frameworks)
+* [Enabling Visual Styles on Windows](#enabling-visual-styles-on-windows)
 
 Documentation
 -------------
