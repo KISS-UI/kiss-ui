@@ -15,8 +15,8 @@ Contents
 
 * [Documentation](#documentation)
 * [Usage](#usage)
-* [Installing IUP Binaries][#installing]
-* [Comparison to Other UI Frameworks][#comparison]
+* [Installing IUP Binaries][#installing-iup-binaries]
+* [Comparison to Other UI Frameworks][#comparison-to-other-ui-frameworks]
 
 Documentation
 -------------
