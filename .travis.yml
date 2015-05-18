@@ -1,0 +1,12 @@
+env:
+  - IUP_DL='http://sourceforge.net/projects/iup/files/3.14/Linux%20Libraries/iup-3.14_Linux313_64_lib.tar.gz'
+
+language: rust
+rust: nightly
+
+before_install:
+  - wget $IUP_DL -O iup_libs.tar.gz
+  - tar -xzvf iup_libs.tar.gz -C ./iup_libs/
+  - sudo ./iup_libs/install
+  - rm -rf iup_libs/
+
