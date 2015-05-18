@@ -8,6 +8,6 @@ before_install:
   - mkdir iup_libs/
   - wget $IUP_DL -O iup_libs.tar.gz
   - tar -xzvf iup_libs.tar.gz -C iup_libs/
-  - sudo ./iup_libs/install
+  - (cd iup_libs/ && sudo ./install)
   - rm -rf iup_libs/
 
