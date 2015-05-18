@@ -33,8 +33,7 @@ Simply add the following to your `Cargo.toml`:
 git = "https://github.com/cybergeek94/kiss-ui
 ```
 
-####Note
-KISS-UI currently only builds on Rust nightly, as it requires unstable features. PRs to fix this situation are welcome.
+####KISS-UI builds on all Rust release channels!
 
 [iup-dl]: http://sourceforge.net/projects/iup/files/3.14/
 
