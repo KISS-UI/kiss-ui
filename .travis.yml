@@ -5,8 +5,9 @@ language: rust
 rust: nightly
 
 before_install:
+  - mkdir iup_libs/
   - wget $IUP_DL -O iup_libs.tar.gz
-  - tar -xzvf iup_libs.tar.gz -C ./iup_libs/
+  - tar -xzvf iup_libs.tar.gz -C iup_libs/
   - sudo ./iup_libs/install
   - rm -rf iup_libs/
 
