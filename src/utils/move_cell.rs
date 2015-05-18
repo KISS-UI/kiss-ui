@@ -17,7 +17,7 @@ impl<T> MoveCell<T> {
 
     /// Create a new `MoveCell` with the given value.
     pub fn with(val: T) -> MoveCell<T> {
-        MoveCell(UnsafeCell::new(None))
+        MoveCell(UnsafeCell::new(Some(val)))
     }
 
     /// Create a new `MoveCell<T>` around the given `Option<T>`.
