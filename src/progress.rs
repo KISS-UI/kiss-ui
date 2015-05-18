@@ -1,8 +1,13 @@
 //! Progress bars and dialogs.
 
-use ::BaseWidget;
+use ::{BaseWidget, Orientation};
 
 /// A widget that renders a bar which fills as its set value approaches a maximum.
+///
+/// For more info, see the [`IupProgressBar`][iup-progress] documentation. (Note: "marquee" is the
+/// same as "indefinite")
+///
+/// [iup-progress]: http://webserver2.tecgraf.puc-rio.br/iup/en/elem/iupprogressbar.html
 pub struct ProgressBar(BaseWidget);
 
 impl ProgressBar {
@@ -49,17 +54,15 @@ impl ProgressBar {
         self
     }
 
-    /// Set this progress bar to render vertically. It will fill from bottom to top.
-    pub fn set_vertical(mut self) -> Self {
-        self.set_const_str_attribute(::attrs::ORIENTATION, ::attrs::values::VERTICAL);
+    /// Set the orientation of this progress bar.
+    ///
+    /// * `Vertical`: The progress bar will render as a vertical bar, and fill from bottom to top.
+    /// * `Horizontal`: The progress bar will render as a horizontal bar, and fill from left to
+    /// right.
+    pub fn set_orientation(mut self, orientation: Orientation) -> Self {
+        self.set_const_str_attribute(::attrs::ORIENTATION, orientation.as_cstr());
         self
-    }
-
-    /// Set this progress bar to render horizontally. It will fill from left to right. (Default)
-    pub fn set_horizontal(mut self) -> Self {
-        self.set_const_str_attribute(::attrs::ORIENTATION, ::attrs::values::HORIZONTAL);
-        self
-    }
+    } 
 
     /// Set the current value of this progress bar. Its rendered infill will be updated to reflect
     /// the new value in relation to the minimum and maximum.

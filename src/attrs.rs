@@ -11,6 +11,7 @@ c_str_consts! {
 
     // Rendering attributes
     RASTERSIZE = "RASTERSIZE",
+    POSITION = "POSITION",
 
     // Layout attributes
     ALIGNMENT_VERT = "ALIGNMENTLIN",
@@ -48,9 +49,7 @@ c_str_consts! {
 pub mod values {
     c_str_consts! {
         YES = "YES",
-        NO = "NO",
-        VERTICAL = "VERTICAL",
-        HORIZONTAL = "HORIZONTAL",
+        NO = "NO", 
     }
 
     pub fn bool_yes_no(_bool: bool) -> &'static str {

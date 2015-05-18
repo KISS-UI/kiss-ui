@@ -2,7 +2,7 @@
 //!
 //! All container types can be nested.
 
-use super::BaseWidget;
+use super::{BaseWidget, Orientation};
 
 /// Vertical alignment setting, used by `Horizontal` and `Grid`.
 #[derive(Copy, Clone)]
@@ -44,6 +44,8 @@ impl HAlign {
     }
 }
 
+
+
 fn raw_handle_vec<B>(widgets: B) -> Vec<*mut ::iup_sys::Ihandle> where B: AsRef<[BaseWidget]> {
     let mut raw_handles: Vec<_> = widgets.as_ref().iter().map(|child| child.0).collect();
     raw_handles.push(::std::ptr::null_mut());
@@ -58,6 +60,10 @@ pub struct Absolute(BaseWidget);
 pub struct Horizontal(BaseWidget);
 
 impl Horizontal {
+    /// Create a new horizontal container with the given vector or array of children, which may
+    /// also be empty.
+    ///
+    /// See the `children![]` macro in this crate for more info.
     pub fn new<C>(children: C) -> Horizontal where C: AsRef<[BaseWidget]> {
         let mut raw_handles = raw_handle_vec(children);
 
@@ -121,29 +127,77 @@ impl Grid {
         self
     }
 
-    pub fn set_vertical(mut self) -> Self {
-        self.set_const_str_attribute(::attrs::ORIENTATION, ::attrs::values::VERTICAL);
-        self
-    }
-
-    pub fn set_horizontal(mut self) -> Self {
-        self.set_const_str_attribute(::attrs::ORIENTATION, ::attrs::values::HORIZONTAL);
+    /// Sets how children are distributed in the container.
+    ///
+    /// * `Vertical`: The container will prefer full columns to rows.
+    /// 
+    /// Visual example (3x3 grid with 7 children):
+    /// <table>
+    ///     <tr>
+    ///         <td>Child</td>
+    ///         <td>Child</td>
+    ///         <td>Child</td>
+    ///     </tr>
+    ///     <tr>
+    ///         <td>Child</td>
+    ///         <td>Child</td>
+    ///     </tr>
+    ///     <tr>
+    ///         <td>Child</td>
+    ///         <td>Child</td>
+    ///     </tr>
+    /// </table>
+    ///
+    /// * `Horizontal`: The container will prefer full rows to columns.
+    ///
+    /// Visual example (3x3 grid with 7 children):
+    /// <table>
+    ///     <tr>
+    ///         <td>Child</td>
+    ///         <td>Child</td>
+    ///         <td>Child</td>
+    ///     </tr>
+    ///     <tr>
+    ///         <td>Child</td>
+    ///         <td>Child</td>
+    ///         <td>Child</td>
+    ///     </tr>
+    ///     <tr>
+    ///         <td>Child</td>
+    ///     </tr>
+    /// </table>
+    ///
+    pub fn set_orientation(mut self, orientation: Orientation) -> Self {
+        self.set_const_str_attribute(::attrs::ORIENTATION, orientation.as_cstr());
         self
     }
 }
 
 impl_base_widget! { Grid, Grid, "matrix" }
 
-/// Convert a list of widgets into an array of `BaseWidget`.
-/// Suitable for passing to any function that takes `AsRef<[BaseWidget]>`.
+/// Convert a heterogeneous list of widgets into an array of `BaseWidget`,
+/// suitable for passing to any function that takes `AsRef<[BaseWidget]>`.
 ///
 /// ##Note
 /// If you are getting an error saying `[BaseWidget; <integer>] does not implement
-/// AsRef<[BaseWidget]>`, then this array is too large (`AsRef<[T]>` is only implemented for
-/// arrays up to size `[T; 32]`). To fix this, call `.to_owned()` on the result to convert it to
-/// `Vec<BaseWidget>`, which will work for any size. 
+/// AsRef<[BaseWidget]>`, then this array is too large. This is because `AsRef<[T]>` is only implemented for
+/// arrays up to size 32. To fix this, use `children_vec!` instead, which will work for any size. 
 #[macro_export]
 macro_rules! children [
     ($($child:expr),+,) => ([$($child.into()),+]);
     () => ([]);
+];
+
+/// Convert a heterogeneous list of widgets into a vector of `BaseWidget`,
+/// suitable for passing to any function that takes `AsRef<[BaseWidget]>`.
+///
+/// ##Note
+/// While this may be used for any number of children, you should prefer the `children![]` macro,
+/// as it uses a stack-allocated array instead of a heap-allocated vector. Use this macro only for
+/// child lists of size 33 or more, as `AsRef<[T]>` is only implemented for arrays of up to
+/// size 32.
+#[macro_export]
+macro_rules! children_vec [
+    ($($child:expr),+) => (vec![$($child.into()),+]);
+    () => (vec![]);
 ];

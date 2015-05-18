@@ -1,3 +1,5 @@
+//! Utility types and functions that might be useful for KISS-UI users.
+
 #[doc(hidden)]
 #[macro_use]
 pub mod cstr;

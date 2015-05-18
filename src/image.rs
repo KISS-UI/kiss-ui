@@ -16,7 +16,7 @@ use std::mem;
 ///
 /// ##Note: Memory Usage
 /// This struct should be freed by calling `.destroy()` on it when it is no longer in use.
-/// Otherwise, it will be freed when `kiss_ui::show_gui()` exits.
+/// Otherwise, it will be freed when `kiss_ui::show_gui()` exits^([citation needed]).
 /// 
 /// ##Note: Cloning
 /// Cloning this image does not duplicate its allocation. Thus, destroying one image cloned from

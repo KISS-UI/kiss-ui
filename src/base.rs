@@ -152,6 +152,21 @@ impl BaseWidget {
         self.set_bool_attribute(::attrs::ACTIVE, enabled);
     }
 
+    /// Set the position of this widget relative to the top-left corner of its parent.
+    ///
+    /// Does nothing if the widget is not renderable or not attached to a parent.
+    pub fn set_position(&mut self, x: i32, y: i32) {
+        self.set_str_attribute(::attrs::POSITION, format!("{x},{y}", x=x, y=y));
+    }
+
+    /// Get the position of this widget relative to the top-left corner of its parent.
+    ///
+    /// Returns (0, 0) if the widget is not renderable, not attached to a parent, or if that is the
+    /// widget's actual relative position.
+    pub fn get_position(&self) -> (i32, i32) {
+        self.get_int2_attribute(::attrs::POSITION)
+    }
+
     /// Set the name of the widget so it can be found within its parent.
     ///
     /// Does nothing if the widget does not support having a name.
@@ -162,17 +177,10 @@ impl BaseWidget {
     /// Get the name of this widget, if the widget supports having a name and one is set.
     pub fn get_name(&self) -> Option<&str> {
         self.get_str_attribute(::attrs::NAME) 
-    }
+    }  
 
-    /// Attempt to downcast this `BaseWidget` to a more specialized widget type.
-    ///
-    /// This will return an error if the underlying widget class is different than the one 
-    /// it is being cast to.
-    pub fn try_downcast<T>(self) -> Result<T, Self> where T: Downcast {
-        T::try_downcast(self) 
-    }
-
-    /// Get the next child in the parent after this widget, in the order which they were added.
+    /// Get the next child in the parent after this widget, based on the order in which they were 
+    /// added.
     ///
     /// Returns `None` if this widget is an only child or is not attached to a parent.
     pub fn get_sibling(&self) -> Option<BaseWidget> {
@@ -236,6 +244,14 @@ impl BaseWidget {
         })
     }
 
+    /// Attempt to downcast this `BaseWidget` to a more specialized widget type.
+    ///
+    /// This will return an error if the underlying widget class is different than the one 
+    /// it is being cast to.
+    pub fn try_downcast<T>(self) -> Result<T, Self> where T: Downcast {
+        T::try_downcast(self) 
+    }
+
     fn classname(&self) -> &CStr {
         unsafe { CStr::from_ptr(iup_sys::IupGetClassName(self.ptr())) } 
     }
@@ -254,6 +270,7 @@ pub trait Downcast {
     fn try_downcast(base: BaseWidget) -> Result<Self, BaseWidget>;
 }
 
+/// Implementation detail; please ignore.
 impl<T> Downcast for T where T: _Downcast {
     fn try_downcast(base: BaseWidget) -> Result<Self, BaseWidget> {
         if Self::classname().as_bytes() == base.classname().to_bytes() {
@@ -268,4 +285,23 @@ impl<T> Downcast for T where T: _Downcast {
 trait _Downcast: Into<BaseWidget> {
     unsafe fn downcast(base: BaseWidget) -> Self;
     fn classname() -> &'static str;
+}
+
+// Placed here so submodules can access the private `as_cstr` method.
+/// Semantics differ based on the method that takes this enum.
+#[derive(Copy, Clone)]
+pub enum Orientation {
+    Vertical,
+    Horizontal,
+}
+
+impl Orientation {
+    fn as_cstr(self) -> &'static str {
+        use self::Orientation::*;
+
+        match self {
+            Vertical => cstr!("VERTICAL"),
+            Horizontal => cstr!("HORIZONTAL"),
+        }
+    }
 }
