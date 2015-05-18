@@ -17,6 +17,7 @@ Contents
 * [Usage](#usage)
 * [Installing IUP Binaries][#installing-iup-binaries]
 * [Comparison to Other UI Frameworks][#comparison-to-other-ui-frameworks]
+* [Enabling Visual Styles on Windows][#enabling-visual-styles-on-windows]
 
 Documentation
 -------------
@@ -99,7 +100,7 @@ Pull requests for corrections and additions are welcome!
   * External Crates: 10 (1 local but pulled from Crates.io)
   * External Native Libs: ~5 (installed on most Linux distros/external on Windows, Mac)
 
-Enabling visual styles on Windows
+Enabling Visual Styles on Windows
 ---------------------------------
 Since Rust/Cargo currently do not support adding resource items to executables, Windows XP and later need an external manifest file to enable visual styles in KISS-UI applications. Otherwise the visual style will be Windows Classic.
 
