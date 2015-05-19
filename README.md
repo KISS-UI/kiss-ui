@@ -79,10 +79,10 @@ Pull requests for corrections and additions are welcome!
 
 * KISS-UI
   * Build Status: [![Build Status](https://travis-ci.org/cybergeek94/kiss-ui.svg?branch=master)](https://travis-ci.org/cybergeek94/kiss-ui)
-  * Supported Platforms: Windows (using Win32 APIs), Linux (using GTK+)
+  * Supported Platforms: Windows (using Win32 APIs), Linux (using GTK+), Mac (theoretically)
   * Native Look and Feel: **Yes**
   * "Hello, World!" LOC: **[18][kiss-ui-hw]**
-  * External Crates: **0** (1 local)
+  * External Crates: **2** (includiing 1 local)
   * External Native Libs: 1
 * [PistonDevelopers/conrod][conrod]
   * Build Status: [![Build Status](https://travis-ci.org/PistonDevelopers/conrod.svg?branch=master)](https://travis-ci.org/PistonDevelopers/conrod)
