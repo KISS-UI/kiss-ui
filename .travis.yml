@@ -15,6 +15,11 @@ install:
   # By piping a newline to ./install, we skip the enter prompt
   - (cd iup_libs/ && echo -ne '\n' | sudo ./install)
   - rm -rf iup_libs/
+  
+script:
+  - cargo build -v
+  - cargo test -v
+  - cargo doc -v
 
 after_script:
   # Docs Upload
