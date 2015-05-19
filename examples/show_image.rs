@@ -1,5 +1,3 @@
-#![feature(core)]
-
 #[macro_use]
 extern crate kiss_ui;
 
@@ -14,7 +12,7 @@ fn main() {
     const WIDTH: u32 = 1920;
     const HEIGHT: u32 = 1080;
 
-    let col_range = || iter::range_inclusive(0u8, 255);
+    let col_range = || 0u8 .. 255;
 
     let image_data: Vec<_> = col_range()
         .flat_map(|val3| col_range().map(move |val2| (val2, val3)))
