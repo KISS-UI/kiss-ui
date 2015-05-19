@@ -30,7 +30,7 @@ Simply add the following to your `Cargo.toml`:
 
 ```
 [dependencies.kiss-ui]
-git = "https://github.com/cybergeek94/kiss-ui
+git = "https://github.com/cybergeek94/kiss-ui"
 ```
 
 ####KISS-UI builds on all Rust release channels!
