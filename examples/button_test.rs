@@ -36,7 +36,7 @@ fn show_new_dialog(_: Button) {
         .show();
 }
 
-fn close_dialog(_: Button) {
+fn close_dialog(_: Button) -> CallbackStatus {
     println!("Closing dialog!");
-    CallbackStatus::Close.set();
+    CallbackStatus::Close
 }

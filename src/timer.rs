@@ -32,7 +32,7 @@ impl Timer {
 
     /// Set a callback to be invoked when the timer interval elapses.
     /// The callback will be invoked on every interval until `.stop()` is called.
-    pub fn set_on_interval<Cb>(mut self, on_interval: Cb) -> Self where Cb: Callback<(Self,)> {
+    pub fn set_on_interval<Cb>(mut self, on_interval: Cb) -> Self where Cb: Callback<Self> {
        callback_impl! { ::attrs::ACTION_CB, self, on_interval, Timer }
        self
     }

@@ -5,3 +5,6 @@ authors = ["Austin Bonander <austin.bonander@gmail.com>"]
 
 [dependencies.iup-sys]
 path = "iup-sys/"
+
+[dependencies]
+libc = "*"

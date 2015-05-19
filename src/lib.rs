@@ -25,8 +25,6 @@
 //!
 //! [iup]: http://webserver2.tecgraf.puc-rio.br/iup/
 
-#![feature(core, libc, scoped_tls, unboxed_closures)]
-
 extern crate libc;
 extern crate iup_sys;
 
@@ -136,15 +134,18 @@ pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> dialog::Dialog + Send {
 
     KISS_RUNNING.with(|state| state.set(true));
 
-    let widget_store = RefCell::new(HashMap::new());
+    init_fn().show();
 
-    WIDGET_STORE.set(&widget_store, || {
-        init_fn().show();
+    unsafe { 
+        iup_sys::IupMainLoop();
+        iup_sys::IupClose();
+    }
 
-        unsafe { 
-            iup_sys::IupMainLoop();
-            iup_sys::IupClose();
-        }
+    KISS_RUNNING.with(|state| state.set(false));
+
+    // Evict the widget store and let it deallocate.
+    WIDGET_STORE.with(|store| {
+        *store.borrow_mut() = HashMap::new();
     });
 }
 
@@ -154,7 +155,7 @@ fn kiss_running() -> bool {
 
 thread_local! { static KISS_RUNNING: Cell<bool> = Cell::new(false) }
 
-scoped_thread_local! { static WIDGET_STORE: RefCell<HashMap<String, BaseWidget>> } 
+thread_local! { static WIDGET_STORE: RefCell<HashMap<String, BaseWidget>> = RefCell::new(HashMap::new()) } 
 
 // base.rs cannot be a regular module because `BaseWidget` defines many private methods that other
 // modules need to access but external users shouldn't.
