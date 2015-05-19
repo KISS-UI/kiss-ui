@@ -95,9 +95,11 @@ Pull requests for corrections and additions are welcome!
   * Build Status: [![Build Status](https://travis-ci.org/rust-gnome/gtk.png?branch=master)](https://travis-ci.org/rust-gnome/gtk)
   * Supported Platforms: Windows, Mac, Linux
   * Native Look and Feel: **Yes**
-  * "Hello, World!" LOC: [33][rust-gnome-hw]
+  * "Hello, World!" LOC: [23][rust-gnome-hw]
   * External Crates: 10 (1 local but pulled from Crates.io)
   * External Native Libs: ~5 (installed on most Linux distros/external on Windows, Mac)
+
+Lines of code should be listed based on the `# sloc` stat on the Github file page. The raw linecount includes empty lines, which can arbitrarily affect the linecount.
 
 Enabling Visual Styles on Windows
 ---------------------------------
