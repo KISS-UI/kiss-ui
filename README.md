@@ -21,7 +21,7 @@ Contents
 
 Documentation
 -------------
-TODO
+[`kiss-ui` docs hosted on Rust-CI](http://rust-ci.org/cybergeek94/kiss-ui/doc/kiss_ui/)
 
 Usage
 -----
