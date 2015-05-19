@@ -7,7 +7,6 @@
 //!
 //! 1. C function-like macros have been converted into functions.
 //! 2. Items that were marked as old or deprecated have been removed.
-#![feature(libc)]
 
 // This file is based on iup.h. If you update this file, please follow the same
 // formatting and ordering as found in iup.h to make comparison easy.
