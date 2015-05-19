@@ -1,4 +1,4 @@
-KISS-UI
+KISS-UI [![Build Status](https://travis-ci.org/cybergeek94/kiss-ui.svg?branch=master)](https://travis-ci.org/cybergeek94/kiss-ui)
 =========
 A UI framework for Rust based on the KISS (Keep It Simple, Stupid!) philosophy.
 
