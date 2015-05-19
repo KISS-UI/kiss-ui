@@ -78,7 +78,7 @@ Comparison to Other UI Frameworks
 Pull requests for corrections and additions are welcome!
 
 * KISS-UI
-  * Build Status: TODO
+  * Build Status: [![Build Status](https://travis-ci.org/cybergeek94/kiss-ui.svg?branch=master)](https://travis-ci.org/cybergeek94/kiss-ui)
   * Supported Platforms: Windows (using Win32 APIs), Linux (using GTK+)
   * Native Look and Feel: **Yes**
   * "Hello, World!" LOC: **[18][kiss-ui-hw]**
