@@ -72,7 +72,7 @@ The Linux binary packages for IUP include both static and dynamic libraries. Whi
 
 
 #### Compile from Source
-To compile from source, see [this page][iup-compile]. The instructions to check-out the source tree are available [here][iup-source]. If you understand how to build projects with CMake, then it shouldn't be too difficult.
+To compile from source, see [this page][iup-compile]. The instructions to check-out the source tree are available [here][iup-source]. If you understand how to build projects with Makefiles, then it shouldn't be too difficult.
 
 #### Download the Precompiled Binaries
 However, if you would rather download the precompiled binaries, begin by going to [the download page][iup-dl].
