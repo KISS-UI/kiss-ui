@@ -49,15 +49,17 @@ PRs amending or adding instructions for any platform are very welcome.
 ***
 ###Windows
 ####Dynamic linking
-* Navigate to `Windows Libraries/Dynamic`
+1. Navigate to `Windows Libraries/Dynamic`
   * 32-bit: Download `iup-3.14_Win32_dllw4_lib.zip`
   * 64-bit: Download `iup-3.14_Win64_dllw4_lib.zip`
-* Extract all `.dll` files to a folder where the linker can find them (pick one):
+2. Extract all `.dll` files to a folder where the linker can find them (pick one):
   * `<Rust install>/bin/rustlib/<platform target>/lib/` (recommended)
   * (using MinGW/MSYS) `<MinGW/MSYS install>/usr/lib`
-* Copy the same DLLs to a folder in your PATH (pick one):
+  * `<Your cargo repository>/bin/<platform target>`
+3. Copy the same DLLs to a folder in your PATH (pick one):
   * `<Rust install>/bin/` (recommended)
   * Create a folder anywhere and add it to your PATH.
+  * Add one of the folders from step 2 to your PATH.
 
 You should **NEVER** place arbitrary files in your Windows install folder, no matter how benign.
 
