@@ -16,6 +16,9 @@ Contents
 * [Documentation](#documentation)
 * [Usage](#usage)
 * [Installing IUP Binaries](#installing-iup-binaries)
+  * [Windows](#windows)
+  * [Linux](#linux)
+  * [OS X](#os-x)
 * [Comparison to Other UI Frameworks](#comparison-to-other-ui-frameworks)
 * [Enabling Visual Styles on Windows](#enabling-visual-styles-on-windows)
 
@@ -67,10 +70,45 @@ You should **NEVER** place arbitrary files in your Windows install folder, no ma
 TODO
 ***
 ###Linux
-TODO (Some distros may have IUP binaries in their package managers, but the author is currently unsure.)
+The Linux binary packages for IUP include both static and dynamic libraries. While efforts are underway to create up-to-date packages for various distributions' package managers, the currently most well supported methods of obtaining IUP binaries are to either compile them from source or download precompiled binaries from the creators.
+
+
+#### Compile from Source
+To compile from source, see [this page][iup-compile]. The instructions to check-out the source tree are available [here][iup-source]. If you understand how to build projects with Makefiles, then it shouldn't be too difficult.
+
+#### Download the Precompiled Binaries
+However, if you would rather download the precompiled binaries, begin by going to [the download page][iup-dl].
+
+1. Navigate to the `Linux Libraries` folder.
+2. Identify your kernel version. This can be done by entering the command `uname -r` into a terminal.
+  * If you don't know if your Linux is 32-bit or 64-bit, use the command `uname -a` and look for the following:
+    * `x86_64`: Your system is 64-bit.
+    * `x86`: Your system is 32-bit.
+3. Select and download the tarball for your kernel version and bit-arity.
+  * For 32-bit (`x86`), there is only one package: `iup-3.14_Linux32_lib.tar.gz`
+  * For 64-bit (`x86_64`), select one of the following based on your kernel version:
+    * **>= 3.19**: `iup-3.14_Linux319_64_lib.tar.gz`
+    * **>= 3.13**: `iup-3.14_Linux313_64_lib.tar.gz`
+    * **>= 3.5**: `iup-3.14_Linux35_64_lib.tar.gz`
+    * **>= 3.2**: `iup-3.14_Linux32_64_lib.tar.gz`
+    * **2.6**: `iup-3.14_Linux26g4_64_lib.tar.gz`
+4. Navigate to the folder where you downloaded the tarball to in a terminal.
+5. Extract the tarball:
+  * `mkdir iup_libs/`
+  * `tar -xzvf <tarball file> -C iup_libs/`
+6. Install the binaries:
+  * `cd iup_libs/` (The install script must be run in its folder.)
+  * `sudo ./install`
+7. Follow the prompts in the installer.
+
+Once the installer completes, you are finished. If you later want to uninstall IUP, open that `iup_libs/` folder in a terminal and run `sudo ./uninstall`. Otherwise, you may now delete the tarball and/or the `iup_libs/` folder.
+
+[iup-compile]: http://webserver2.tecgraf.puc-rio.br/iup/en/guide.html#buildlib
+[iup-source]: http://webserver2.tecgraf.puc-rio.br/iup/en/svn.html
 ***
 ###OS X
 IUP does not currently have binaries available for OS X. However, since it is powered by GTK+ on Linux, it should be possible to build it for OS X using (mostly) the same steps. Feel free to try it and let us know how it goes.
+
 ***
 
 Comparison to Other UI Frameworks
