@@ -1,6 +1,6 @@
 //! KISS-UI top-level dialogs (windows)
 
-use super::BaseWidget;
+use widget_prelude::*;
 
 use ::iup_sys;
 
@@ -25,7 +25,7 @@ impl Dialog {
         assert_kiss_running!();
 
         unsafe { 
-            let ptr = iup_sys::IupDialog(contents.into().0);
+            let ptr = iup_sys::IupDialog(contents.into().ptr());
             Dialog(BaseWidget::from_ptr(ptr))
         }
     }

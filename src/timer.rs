@@ -1,5 +1,5 @@
 //! Timers that can invoke a callback on an interval.  
-use ::BaseWidget;
+use widget_prelude::*;
 use ::callback::Callback;
 
 /// A timer that can invoke a callback on a configurable interval.

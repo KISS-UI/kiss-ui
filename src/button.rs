@@ -1,6 +1,6 @@
 //! Buttons that can receive user input.
 
-use super::BaseWidget;
+use widget_prelude::*;
 
 use std::ptr;
 

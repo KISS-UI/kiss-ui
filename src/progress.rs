@@ -1,6 +1,8 @@
 //! Progress bars and dialogs.
 
-use ::{BaseWidget, Orientation};
+use widget_prelude::*;
+
+use container::Orientation;
 
 /// A widget that renders a bar which fills as its set value approaches a maximum.
 ///
