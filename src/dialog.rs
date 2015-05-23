@@ -5,6 +5,7 @@ use widget_prelude::*;
 use ::iup_sys;
 
 use std::ffi::CString;
+use std::ptr;
 
 /// A top-level dialog that can create a new native window when shown,
 /// and can contain a single widget (which can be a container for many widgets).
@@ -26,6 +27,19 @@ impl Dialog {
 
         unsafe { 
             let ptr = iup_sys::IupDialog(contents.into().ptr());
+            Dialog(BaseWidget::from_ptr(ptr))
+        }
+    }
+
+    /// Create a new dialog with no children.
+    ///
+    /// ##Panics
+    /// If called outside a valid KISS-UI context.
+    pub fn empty() -> Dialog {
+        assert_kiss_running!();
+
+        unsafe {
+            let ptr = iup_sys::IupDialog(ptr::null_mut());
             Dialog(BaseWidget::from_ptr(ptr))
         }
     }
