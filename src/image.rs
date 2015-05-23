@@ -1,6 +1,6 @@
 //! Renderable image buffers.
 
-use super::BaseWidget;
+use widget_prelude::*;
 
 use std::ops::DerefMut;
 use std::mem;

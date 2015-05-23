@@ -2,7 +2,7 @@
 //!
 //! All container types can be nested.
 
-use super::{BaseWidget, Orientation};
+use widget_prelude::*;
 
 /// Vertical alignment setting, used by `Horizontal` and `Grid`.
 #[derive(Copy, Clone)]
@@ -44,10 +44,27 @@ impl HAlign {
     }
 }
 
+#[derive(Copy, Clone)]
+pub enum Orientation {
+    Vertical,
+    Horizontal,
+}
+
+impl Orientation {
+    #[doc(hidden)]
+    pub fn as_cstr(self) -> &'static str {
+        use self::Orientation::*;
+
+        match self {
+            Vertical => cstr!("VERTICAL"),
+            Horizontal => cstr!("HORIZONTAL"),
+        }
+    }
+}
 
 
 fn raw_handle_vec<B>(widgets: B) -> Vec<*mut ::iup_sys::Ihandle> where B: AsRef<[BaseWidget]> {
-    let mut raw_handles: Vec<_> = widgets.as_ref().iter().map(|child| child.0).collect();
+    let mut raw_handles: Vec<_> = widgets.as_ref().iter().map(BaseWidget::ptr).collect();
     raw_handles.push(::std::ptr::null_mut());
     raw_handles
 }

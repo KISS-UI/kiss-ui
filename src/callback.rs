@@ -1,9 +1,8 @@
 //! Traits for notifying client code when the state of a KISS-UI widget is updated.
 
-use super::BaseWidget;
+use widget_prelude::*;
 
 use iup_sys::{Ihandle, CallbackReturn};
-
 
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -75,7 +74,7 @@ macro_rules! callback_impl {
                 use ::callback::CallbackStatus;
 
                 let widget = unsafe { 
-                    ::BaseWidget::from_ptr(element) 
+                    BaseWidget::from_ptr(element) 
                 }.try_downcast::<$self_ty>();
 
                 widget.ok().and_then(|_self|

@@ -28,45 +28,6 @@
 extern crate libc;
 extern crate iup_sys;
 
-macro_rules! impl_base_widget {
-    ($ty:ty, $ty_cons:path, $classname:expr) => (
-        impl Into<::BaseWidget> for $ty {
-            fn into(self) -> ::BaseWidget {
-                self.0
-            }
-        }
-
-        impl ::std::ops::Deref for $ty {
-            type Target = ::BaseWidget;
-
-            fn deref(&self) -> &::BaseWidget {
-                &self.0
-            }
-        }
-
-        impl ::std::ops::DerefMut for $ty {
-            fn deref_mut(&mut self) -> &mut ::BaseWidget {
-                &mut self.0
-            }
-        }
-
-        impl ::_Downcast for $ty {
-            unsafe fn downcast(base: ::BaseWidget) -> $ty {
-                $ty_cons(base)
-            }
-
-            fn classname() -> &'static str {
-                $classname
-            }
-        }
-
-        impl Clone for $ty {
-            fn clone(&self) -> Self {
-                $ty_cons(self.0.clone())
-            }
-        }
-    )
-}
 
 macro_rules! assert_kiss_running (
     () => (
@@ -76,6 +37,9 @@ macro_rules! assert_kiss_running (
         )
     )
 );
+
+#[macro_use]
+pub mod base;
 
 #[macro_use]
 pub mod utils;
@@ -97,6 +61,13 @@ pub mod timer;
 
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
+use std::ptr;
+
+use base::BaseWidget;
+
+mod widget_prelude {
+    pub use base::{BaseWidget, ImplDetails};
+}
 
 /// The entry point for KISS-UI. The closure argument should initialize and return the main window
 /// dialog, at which point `.show()` will be called on it and the IUP event loop will begin
@@ -126,6 +97,8 @@ use std::collections::HashMap;
 /// Since no widget types are `Send`, this bound prevents this from happening without requiring
 /// all widget methods to check if they were invoked in a valid context.
 pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> dialog::Dialog + Send {
+    use ::utils::cstr::AsCStr;
+
     unsafe { 
         assert!(iup_sys::IupOpen(ptr::null(), ptr::null()) == 0);
         // Force IUP to always use UTF-8
@@ -156,10 +129,3 @@ fn kiss_running() -> bool {
 thread_local! { static KISS_RUNNING: Cell<bool> = Cell::new(false) }
 
 thread_local! { static WIDGET_STORE: RefCell<HashMap<String, BaseWidget>> = RefCell::new(HashMap::new()) } 
-
-// base.rs cannot be a regular module because `BaseWidget` defines many private methods that other
-// modules need to access but external users shouldn't.
-//
-// So, instead, we inline it here so submodules can access the private methods 
-// while it remains a separate source file.
-include!("base.rs");
