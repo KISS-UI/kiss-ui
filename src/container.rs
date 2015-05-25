@@ -1,6 +1,9 @@
 //! Assorted types that can contain multiple widgets.
 //!
 //! All container types can be nested.
+//!
+//! Use the `children!{}` macro in this crate to convert a heterogeneous list of widgets into a
+//! `Vec<BaseWidget>` for the container constructors.
 
 use widget_prelude::*;
 
@@ -44,7 +47,8 @@ impl HAlign {
     }
 }
 
-#[derive(Copy, Clone)]
+/// The behavior of this enum depends on its point of use.
+#[derive(PartialEq, Eq, Copy, Clone)]
 pub enum Orientation {
     Vertical,
     Horizontal,
@@ -134,6 +138,14 @@ impl_base_widget! { Vertical, Vertical, "vbox" }
 pub struct Grid(BaseWidget);
 
 impl Grid {
+    pub fn new<C>(children: C) -> Grid where C: AsRef<[BaseWidget]> {
+       let mut raw_handles = raw_handle_vec(children); 
+
+        unsafe {
+            let ptr = ::iup_sys::IupGridBoxv(raw_handles.as_mut_ptr());
+            Grid(BaseWidget::from_ptr(ptr))
+        }
+    }
     pub fn set_valign(mut self, valign: VAlign) -> Self {
         self.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_cstr());
         self
@@ -144,11 +156,22 @@ impl Grid {
         self
     }
 
+    /// Based on the orientation, set the number of children to place in a:
+    ///
+    /// * `Vertial`: **column**
+    /// * `Horizontal`: **row**
+    ///
+    /// before beginning the next one.
+    pub fn set_ndiv(mut self, ndiv: u32) -> Self {
+        self.set_int_attribute(::attrs::NUMDIV, ndiv as i32);
+        self
+    }
+
     /// Sets how children are distributed in the container.
     ///
-    /// * `Vertical`: The container will prefer full columns to rows.
+    /// * `Vertical`: The container will fill columns first.
     /// 
-    /// Visual example (3x3 grid with 7 children):
+    /// Visual example (`ndiv=3` grid with 7 children):
     /// <table>
     ///     <tr>
     ///         <td>Child</td>
@@ -165,9 +188,9 @@ impl Grid {
     ///     </tr>
     /// </table>
     ///
-    /// * `Horizontal`: The container will prefer full rows to columns.
+    /// * `Horizontal`: The container will fill rows first. **Default.**
     ///
-    /// Visual example (3x3 grid with 7 children):
+    /// Visual example (`ndiv=3` grid with 7 children):
     /// <table>
     ///     <tr>
     ///         <td>Child</td>
@@ -192,29 +215,13 @@ impl Grid {
 
 impl_base_widget! { Grid, Grid, "matrix" }
 
-/// Convert a heterogeneous list of widgets into an array of `BaseWidget`,
-/// suitable for passing to any function that takes `AsRef<[BaseWidget]>`.
-///
-/// ##Note
-/// If you are getting an error saying `[BaseWidget; <integer>] does not implement
-/// AsRef<[BaseWidget]>`, then this array is too large. This is because `AsRef<[T]>` is only implemented for
-/// arrays up to size 32. To fix this, use `children_vec!` instead, which will work for any size. 
+/// Convert a heterogeneous list of widgets into a `Vec<BaseWidget>`,
+/// suitable for passing to any function that takes `AsRef<[BaseWidget]>`, such as a constructor
+/// for one of the container types.
 #[macro_export]
 macro_rules! children [
-    ($($child:expr),+,) => ([$($child.into()),+]);
-    () => ([]);
-];
-
-/// Convert a heterogeneous list of widgets into a vector of `BaseWidget`,
-/// suitable for passing to any function that takes `AsRef<[BaseWidget]>`.
-///
-/// ##Note
-/// While this may be used for any number of children, you should prefer the `children![]` macro,
-/// as it uses a stack-allocated array instead of a heap-allocated vector. Use this macro only for
-/// child lists of size 33 or more, as `AsRef<[T]>` is only implemented for arrays of up to
-/// size 32.
-#[macro_export]
-macro_rules! children_vec [
+    // Accept the invocation with or without a final comma.
+    ($($child:expr),+,) => (vec![$($child.into()),+]);
     ($($child:expr),+) => (vec![$($child.into()),+]);
     () => (vec![]);
 ];

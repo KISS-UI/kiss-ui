@@ -1,3 +1,5 @@
+//! Operations common to all widget types.
+
 use utils::cstr::AsCStr;
 
 use dialog::Dialog;
@@ -12,7 +14,7 @@ use std::ptr;
 ///
 /// Some operations may have no effect for certain widget types.
 ///
-/// All widgets must implement `Deref` and `DerefMut` with this type as the target.
+/// All widgets must implement `Deref<Target=BaseWidget>` and `DerefMut`.
 pub struct BaseWidget(*mut iup_sys::Ihandle);
 
 impl BaseWidget { 
