@@ -85,18 +85,7 @@ mod widget_prelude {
 ///
 /// After it returns, IUP is deinitialized and all static widget methods will panic to avoid
 /// undefined behavior.
-///
-/// ##Note: `Send` bound
-/// This closure will be called in the same thread where `show_gui()` is invoked. No threading is
-/// involved.
-/// 
-/// However, without the `Send` bound it would be possible to move widget types outside
-/// of the closure with safe code and interact with them after IUP has been deinitialized, 
-/// which would cause undefined behavior. 
-///
-/// Since no widget types are `Send`, this bound prevents this from happening without requiring
-/// all widget methods to check if they were invoked in a valid context.
-pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> dialog::Dialog + Send {
+pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> dialog::Dialog {
     use ::utils::cstr::AsCStr;
 
     unsafe { 
