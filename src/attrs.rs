@@ -17,6 +17,7 @@ c_str_consts! {
     ALIGNMENT_VERT = "ALIGNMENTLIN",
     ALIGNMENT_HORI = "ALIGNMENTCOL",
     ORIENTATION = "ORIENTATION",
+    NUMDIV = "numdiv",
 
     //Textbox attributes
     MULTILINE = "MULTILINE",
