@@ -4,8 +4,7 @@ extern crate kiss_ui;
 use kiss_ui::button::Button;
 use kiss_ui::container::Horizontal;
 use kiss_ui::callback::{OnClick, CallbackStatus};
-use kiss_ui::dialog::Dialog;
-use kiss_ui::text::Label;
+use kiss_ui::dialog::{self, AlertPopupBuilder, Dialog};
 
 fn main() {
     kiss_ui::show_gui(||
@@ -13,8 +12,11 @@ fn main() {
             Horizontal::new(
                 children![               
                     Button::new()
-                        .set_label(Some("Click me!"))
-                        .set_onclick(show_new_dialog),
+                        .set_label(Some("Message"))
+                        .set_onclick(show_message_dialog),
+                    Button::new()
+                        .set_label(Some("Alert"))
+                        .set_onclick(show_alert_dialog),
                     Button::new()
                         .set_label(Some("Close"))
                         .set_onclick(close_dialog),
@@ -23,17 +25,20 @@ fn main() {
             .set_elem_spacing_pixels(10)                   
         )
         .set_title("Button test!")
-        .set_size_pixels(140, 70)
     );
 }
 
-fn show_new_dialog(_: Button) {
-    println!("Button clicked!");
+fn show_message_dialog(_: Button) {
+    dialog::message_popup("Good job!", "You clicked the button!");
+}
 
-    Dialog::new(Label::new("You clicked the button!"))
-        .set_title("Button clicked!")
-        .set_size_pixels(180, 90)
-        .show();
+fn show_alert_dialog(_: Button) {
+    let res = AlertPopupBuilder::new("Alert!", "You clicked the other button!", "Yes")
+        .button2("No")
+        .button3("Cancel")
+        .popup();
+
+    println!("Alert result = {}", res);
 }
 
 fn close_dialog(_: Button) -> CallbackStatus {

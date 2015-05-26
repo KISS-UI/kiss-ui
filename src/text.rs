@@ -1,6 +1,6 @@
 //! Widgets that can render and process text (labels, text boxes).
 
-use super::BaseWidget;
+use widget_prelude::*;
 
 use std::ffi::CString;
 use std::ptr;
