@@ -5,7 +5,6 @@ use kiss_ui::button::Button;
 use kiss_ui::container::Horizontal;
 use kiss_ui::callback::{OnClick, CallbackStatus};
 use kiss_ui::dialog::{self, AlertPopupBuilder, Dialog};
-use kiss_ui::text::Label;
 
 fn main() {
     kiss_ui::show_gui(||

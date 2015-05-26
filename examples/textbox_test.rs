@@ -34,5 +34,5 @@ fn show_alert_message(clicked: Button) {
         .try_downcast::<TextBox>().ok().expect("child my_textbox was not a TextBox!");
     let text = text_box.get_text();
 
-    dialog::popup_message_dialog("Message saved!", format!("Your message: {}", text));
+    dialog::message_popup("Message saved!", format!("Your message: {}", text));
 }

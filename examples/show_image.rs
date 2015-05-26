@@ -6,8 +6,6 @@ use kiss_ui::dialog::Dialog;
 use kiss_ui::image::{Image, ImageContainer};
 use kiss_ui::text::Label;
 
-use std::iter;
-
 fn main() {
     const WIDTH: u32 = 1920;
     const HEIGHT: u32 = 1080;
