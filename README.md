@@ -114,6 +114,8 @@ You can download and install the precompiled Mac OS X binary available [here][os
 
 Once you have downloaded the tarball, the installation process *should be* equivalent to Linux's starting at **Step 4**.
 
+[os-x]: http://sourceforge.net/projects/iup/files/3.14/Other%20Libraries/
+
 ***
 
 Comparison to Other UI Frameworks
