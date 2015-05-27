@@ -98,7 +98,9 @@ However, if you would rather download the precompiled binaries, begin by going t
   * `tar -xzvf <tarball file> -C iup_libs/`
 6. Install the binaries:
   * `cd iup_libs/` (The install script must be run in its folder.)
-  * `sudo ./install`
+  * You can run either, or both, of the following two commands:
+  * To install the dynamic libraries: `sudo ./install`
+  * To install the static libraries: `sudo ./install_dev`
 7. Follow the prompts in the installer.
 
 Once the installer completes, you are finished. If you later want to uninstall IUP, open that `iup_libs/` folder in a terminal and run `sudo ./uninstall`. Otherwise, you may now delete the tarball and/or the `iup_libs/` folder.
@@ -107,7 +109,10 @@ Once the installer completes, you are finished. If you later want to uninstall I
 [iup-source]: http://webserver2.tecgraf.puc-rio.br/iup/en/svn.html
 ***
 ###OS X
-IUP does not currently have binaries available for OS X. However, since it is powered by GTK+ on Linux, it should be possible to build it for OS X using (mostly) the same steps. Feel free to try it and let us know how it goes.
+
+You can download and install the precompiled Mac OS X binary available [here][os-x]. It appears the only download available is for OS X 10.10 64-bit.
+
+Once you have downloaded the tarball, the installation process *should be* equivalent to Linux's starting at **Step 4**.
 
 ***
 
