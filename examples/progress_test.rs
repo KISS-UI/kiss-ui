@@ -24,27 +24,27 @@ fn main() {
                     ProgressBar::new().set_indefinite(true),
                 ]
             )
-        ).set_title("Progressbar Test");        
+        );        
 
-        dialog.set_on_show(move |_|{
-            // Clone these so they can be moved into the inner closure
-            let mut regular = regular.clone();
-            let mut dashed = dashed.clone();
+        dialog
+            .set_title("Progressbar Test")
+            .set_on_show(move |_| {
+                let on_timer_interval = move |timer: Timer|{
+                    regular.add_value(0.1);
+                    dashed.add_value(0.1);
 
-            let on_timer_interval = move |mut timer: Timer|{
-                regular.add_value(0.1);
-                dashed.add_value(0.1);
+                    if regular.get_value() == 1.0 {
+                        timer.stop();
+                    }
+                };
 
-                if regular.get_value() == 1.0 {
-                    timer.stop();
-                }
-            };
-
-            Timer::new()
-                .set_interval(1000)
-                .set_on_interval(on_timer_interval)
-                .start()             
-        })
+                Timer::new()
+                    .set_interval(1000)
+                    .set_on_interval(on_timer_interval)
+                    .start();
+            });
+        
+        dialog
     });
 }
 

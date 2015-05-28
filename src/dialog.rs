@@ -1,5 +1,6 @@
 //! KISS-UI top-level dialogs (windows)
 
+use base::BaseWidget;
 use widget_prelude::*;
 
 use ::iup_sys;
@@ -9,7 +10,7 @@ use std::ptr;
 
 /// A top-level dialog that can create a new native window when shown,
 /// and can contain a single widget (which can be a container for many widgets).
-pub struct Dialog(BaseWidget);
+pub struct Dialog(IUPPtr);
 
 impl Dialog {
     /// Create a new dialog with a single child. 
@@ -22,12 +23,12 @@ impl Dialog {
     ///
     /// ##Panics
     /// If called outside a valid KISS-UI context.
-    pub fn new<W>(contents: W) -> Dialog where W: Into<BaseWidget> {
+    pub fn new<W>(contents: W) -> Dialog where W: Widget {
         assert_kiss_running!();
 
         unsafe { 
-            let ptr = iup_sys::IupDialog(contents.into().ptr());
-            Dialog(BaseWidget::from_ptr(ptr))
+            let ptr = iup_sys::IupDialog(contents.ptr());
+            Self::from_ptr(ptr)
         }
     }
 
@@ -40,18 +41,18 @@ impl Dialog {
 
         unsafe {
             let ptr = iup_sys::IupDialog(ptr::null_mut());
-            Dialog(BaseWidget::from_ptr(ptr))
+            Self::from_ptr(ptr)
         }
     }
 
     /// Set the title of this dialog, which will appear in the title bar of the native window.
-    pub fn set_title<T: Into<String>>(mut self, title: T) -> Self {
+    pub fn set_title<T: Into<String>>(self, title: T) -> Self {
         self.set_str_attribute(::attrs::TITLE, title);
         self
     }
 
     /// Set the size of this dialog in pixels.
-    pub fn set_size_pixels(mut self, width: u32, height: u32) -> Self {
+    pub fn set_size_pixels(self, width: u32, height: u32) -> Self {
         let rastersize = format!("{}x{}", width, height);
         self.set_str_attribute(::attrs::RASTERSIZE, rastersize);
         self
@@ -60,22 +61,19 @@ impl Dialog {
     /// Get a child of this dialog named by `name`.
     ///
     /// Returns `None` if the child was not found.
-    pub fn get_child(&self, name: &str) -> Option<BaseWidget> {
+    pub fn get_child(self, name: &str) -> Option<BaseWidget> {
         let name = CString::new(name).unwrap();        
 
         unsafe {
             let child_ptr = iup_sys::IupGetDialogChild(self.ptr(), name.as_ptr());
             BaseWidget::from_ptr_opt(child_ptr)
         }
-    }
-
-    /// Destroy this dialog, deallocating it and all attached children.
-    pub fn destroy(self) {
-        self.0.destroy()
-    }
+    } 
 }
 
-impl_base_widget! { Dialog, Dialog, "dialog" }
+impl Destroy for Dialog {}
+
+impl_widget! { Dialog, "dialog" }
 
 impl_on_show! { Dialog }
 

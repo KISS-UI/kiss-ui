@@ -1,10 +1,11 @@
 #[macro_use]
 extern crate kiss_ui;
 
+use kiss_ui::prelude::*;
+
 use kiss_ui::button::Button;
-use kiss_ui::callback::OnClick;
 use kiss_ui::container::Vertical;
-use kiss_ui::dialog::{self, Dialog};
+use kiss_ui::dialog;
 use kiss_ui::text::{Label, TextBox};
 
 fn main() {
@@ -13,13 +14,11 @@ fn main() {
             Vertical::new(
                 children![
                     Label::new("Enter a message:"),
-                    {
-                        let mut textbox = TextBox::new().set_visible_columns(20);
-                        textbox.set_name("my_textbox");
-                        textbox
-                    },
+                    TextBox::new()
+                        .set_visible_columns(20)
+                        .set_name("my_textbox"),
                     Button::new()
-                        .set_label(Some("Save"))
+                        .set_label("Save")
                         .set_onclick(show_alert_message),
                 ]
             )

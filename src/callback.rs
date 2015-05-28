@@ -6,7 +6,6 @@ use iup_sys::{Ihandle, CallbackReturn};
 
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::ops::DerefMut;
 
 /// Set this within a callback to tell the framework if it should close or not.
 ///
@@ -62,7 +61,7 @@ impl<Args, Out: Into<CallbackStatus>, F: 'static> Callback<Args> for F where F: 
 pub type CallbackMap<T> = RefCell<HashMap<*mut Ihandle, Box<Callback<T>>>>;
 
 macro_rules! callback_impl {
-    ($cb_attr:expr, $base:expr, $callback:expr, $self_ty:ty) => (
+    ($cb_attr:expr, $base:expr, $callback:expr, $self_ty:ident) => (
         { 
             thread_local!(
                 static CALLBACKS: ::callback::CallbackMap<$self_ty> = 
@@ -73,16 +72,12 @@ macro_rules! callback_impl {
             -> ::iup_sys::CallbackReturn {
                 use ::callback::CallbackStatus;
 
-                let widget = unsafe { 
-                    BaseWidget::from_ptr(element) 
-                }.try_downcast::<$self_ty>();
+                let widget = unsafe { $self_ty::from_ptr(element) };
 
-                widget.ok().and_then(|_self|
-                    CALLBACKS.with(|callbacks| 
-                        callbacks.borrow_mut()
-                            .get_mut(&_self.ptr())
-                            .map(|cb| cb.on_callback(_self))
-                    )
+                CALLBACKS.with(|callbacks| 
+                    callbacks.borrow_mut()
+                        .get_mut(&widget.ptr())
+                        .map(|cb| cb.on_callback(widget))
                 ).unwrap_or(CallbackStatus::Default).to_cb_return()
             }
 
@@ -95,14 +90,14 @@ macro_rules! callback_impl {
 }
 
 /// A trait describing a widget that can be clicked, and can notify client code when this occurs.
-pub trait OnClick: DerefMut<Target=BaseWidget> + Sized {
+pub trait OnClick: Widget {
     fn set_onclick<Cb>(self, on_click: Cb) -> Self where Cb: Callback<Self>;
 }
 
 macro_rules! impl_onclick {
-    ($self_ty:ty) => (
+    ($self_ty:ident) => (
         impl $crate::callback::OnClick for $self_ty {
-            fn set_onclick<Cb>(mut self, on_click: Cb) -> Self where Cb: ::callback::Callback<Self> {
+            fn set_onclick<Cb>(self, on_click: Cb) -> Self where Cb: ::callback::Callback<Self> {
                 callback_impl! { $crate::attrs::ACTION, self, on_click, $self_ty }
                 self
             }
@@ -112,14 +107,14 @@ macro_rules! impl_onclick {
 
 /// A trait describing a widget which has a value that can be changed by the user, and can notify
 /// client code when this occurs.
-pub trait OnValueChange: DerefMut<Target=BaseWidget> + Sized {
+pub trait OnValueChange: Widget {
     fn set_on_value_changed<Cb>(self, on_value_chaged: Cb) -> Self where Cb: Callback<Self>;
 }
 
 macro_rules! impl_on_value_change {
-    ($self_ty:ty) => (
+    ($self_ty:ident) => (
         impl $crate::callback::OnValueChange for $self_ty {
-            fn set_on_value_changed<Cb>(mut self, on_value_changed: Cb) -> Self where Cb: ::callback::Callback<Self> {
+            fn set_on_value_changed<Cb>(self, on_value_changed: Cb) -> Self where Cb: ::callback::Callback<Self> {
                 callback_impl! { $crate::attrs::VALUE_CHANGED_CB, self, on_value_changed, $self_ty }
                 self
             }
@@ -128,14 +123,14 @@ macro_rules! impl_on_value_change {
 }
 
 /// A trait describing a widget that can be shown, and can notify client code when this occurs.
-pub trait OnShow: DerefMut<Target=BaseWidget> + Sized {
+pub trait OnShow: Widget {
     fn set_on_show<Cb>(self, on_show: Cb) -> Self where Cb: Callback<Self>;
 }
 
 macro_rules! impl_on_show {
-    ($self_ty:ty) => (
+    ($self_ty:ident) => (
         impl ::callback::OnShow for $self_ty {
-            fn set_on_show<Cb>(mut self, on_show: Cb) -> Self where Cb: ::callback::Callback<Self> {
+            fn set_on_show<Cb>(self, on_show: Cb) -> Self where Cb: ::callback::Callback<Self> {
                 callback_impl! { ::attrs::MAP_CB, self, on_show, $self_ty }
                 self
             }

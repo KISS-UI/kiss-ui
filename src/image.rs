@@ -2,7 +2,6 @@
 
 use widget_prelude::*;
 
-use std::ops::DerefMut;
 use std::mem;
 
 /// An image buffer allocated by IUP.
@@ -21,7 +20,7 @@ use std::mem;
 /// ##Note: Cloning
 /// Cloning this image does not duplicate its allocation. Thus, destroying one image cloned from
 /// another will destroy them both.
-pub struct Image(BaseWidget);
+pub struct Image(IUPPtr);
 
 impl Image {
     /// Create a new RGB image buffer from a slice of 3-byte tuples, copying the data into a new
@@ -35,7 +34,7 @@ impl Image {
         assert_eq!((width * height) as usize, pixels.len());
         unsafe { 
             let ptr = ::iup_sys::IupImageRGB(width as i32, height as i32, pixels.as_ptr() as *const u8); 
-            Image(BaseWidget::from_ptr(ptr))
+            Self::from_ptr(ptr)
         }
     }
 
@@ -50,19 +49,14 @@ impl Image {
         assert_eq!((width * height) as usize, pixels.len());
         unsafe { 
             let ptr = ::iup_sys::IupImageRGBA(width as i32, height as i32, pixels.as_ptr() as *const u8);
-            Image(BaseWidget::from_ptr(ptr))
+            Self::from_ptr(ptr)
         }
-    }
-
-    /// Destroy this image, deallocating its backing memory. It will be removed from any elements
-    /// it has been applied to.
-    ///
-    /// ##Warning
-    /// Because they share backing allocations, this will affect all clones as well.
-    pub fn destroy(self) {
-        self.0.destroy()
-    }
+    } 
 }
+
+impl Destroy for Image {}
+
+impl_widget!{ Image, "image" }
 
 /// Cast a slice of bytes to a slice of 3-byte tuples without copying.
 ///
@@ -86,10 +80,8 @@ pub fn transmute_buffer_rgba(buf: &[u8]) -> Option<&[(u8, u8, u8, u8)]> {
     }
 }
 
-impl_base_widget!{ Image, Image, "image" }
-
 /// A trait describing an object that can render an image within itself.
-pub trait ImageContainer: DerefMut<Target=BaseWidget> + Sized {
+pub trait ImageContainer: Widget {
     /// Set the image this widget is to render and return `self` for method chaining.
     fn set_image(self, image: Image) -> Self {
         self.set_attr_handle(::attrs::IMAGE, image);
@@ -98,7 +90,11 @@ pub trait ImageContainer: DerefMut<Target=BaseWidget> + Sized {
 
     /// Get a copy of the image set on this widget, if any.
     fn get_image(&self) -> Option<Image> {
-        self.get_attr_handle(::attrs::IMAGE).map(Image)
+        use base::BaseWidget;
+
+        self.get_attr_handle(::attrs::IMAGE)
+            .map(BaseWidget::try_downcast::<Image>)
+            .and_then(Result::ok)
     }
 }
 
