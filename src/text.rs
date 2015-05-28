@@ -6,7 +6,7 @@ use std::ffi::CString;
 use std::ptr;
 
 /// A static widget that renders text within its parent.
-pub struct Label(BaseWidget);
+pub struct Label(IUPPtr);
 
 impl Label {
     /// Create a label with some text. 
@@ -14,7 +14,7 @@ impl Label {
         let c_text = CString::new(text.into()).unwrap();
          unsafe {
             let ptr = ::iup_sys::IupLabel(c_text.as_ptr());
-            Label(BaseWidget::from_ptr(ptr))
+            Self::from_ptr(ptr)
         }
     }
 
@@ -22,13 +22,14 @@ impl Label {
     pub fn new_empty() -> Label {
         unsafe { 
             let ptr = ::iup_sys::IupLabel(ptr::null());
-            Label(BaseWidget::from_ptr(ptr))       
+            Self::from_ptr(ptr)       
         }
     }
 
     /// Update the text of this label.
-    pub fn set_text(&mut self, text: &str) {
+    pub fn set_text(self, text: &str) -> Self {
         self.set_str_attribute(::attrs::TITLE, text);
+        self
     }
 
     /// Get the text of this label.
@@ -37,19 +38,19 @@ impl Label {
     }
 }
 
-impl_base_widget! { Label, Label, "label" }
+impl_widget! { Label, "label" }
 
 impl ::image::ImageContainer for Label {}
 
 /// A widget that renders user-editable text.
-pub struct TextBox(BaseWidget);
+pub struct TextBox(IUPPtr);
 
 impl TextBox {
     /// Create a new, empty text box.
     pub fn new() -> TextBox {
         unsafe {
             let ptr = ::iup_sys::IupText(ptr::null());
-            TextBox(BaseWidget::from_ptr(ptr))
+            Self::from_ptr(ptr)
         }
     }
 
@@ -58,7 +59,7 @@ impl TextBox {
     /// If `false`, it will only be slightly taller than a line of text in the current font.
     /// If `true`, the total dimensions will be set by `set_visible_columns` and
     /// `set_visible_lines`. Text outside these bounds will be accessible with a scrollbar.
-    pub fn set_multiline(mut self, multiline: bool) -> Self {
+    pub fn set_multiline(self, multiline: bool) -> Self {
         self.set_bool_attribute(::attrs::MULTILINE, multiline);
         self
     }
@@ -67,7 +68,7 @@ impl TextBox {
     ///
     /// If the textbox is set as multiline, this will cause additional text beyond the maximum
     /// width to wrap. Otherwise, it can be scrolled only horizontally.
-    pub fn set_visible_columns(mut self, cols: u32) -> Self {
+    pub fn set_visible_columns(self, cols: u32) -> Self {
         self.set_int_attribute(::attrs::VISIBLE_COLUMNS, cols as i32);
         self
     }
@@ -76,14 +77,15 @@ impl TextBox {
     ///
     /// If the textbox is set as multiline, newline characters will push text following them to the
     /// next visible line. Line counts beyond these bounds will cause a scrollbar to be shown.
-    pub fn set_visible_lines(mut self, lines: u32) -> Self {
+    pub fn set_visible_lines(self, lines: u32) ->  Self {
         self.set_int_attribute(::attrs::VISIBLE_LINES, lines as i32);
         self
     }
 
     /// Set the text of this textbox.
-    pub fn set_text(&mut self, value: &str) {
+    pub fn set_text(self, value: &str) -> Self {
         self.set_str_attribute(::attrs::VALUE, value);
+        self
     }
 
     /// Get the text value of this textbox.
@@ -92,7 +94,7 @@ impl TextBox {
     }    
 }
 
-impl_base_widget! { TextBox, TextBox, "text" }
+impl_widget! { TextBox, "text" }
 
 impl_on_value_change! { TextBox }
 

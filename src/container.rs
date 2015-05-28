@@ -5,6 +5,7 @@
 //! Use the `children!{}` macro in this crate to convert a heterogeneous list of widgets into a
 //! `Vec<BaseWidget>` for the container constructors.
 
+use base::BaseWidget;
 use widget_prelude::*;
 
 /// Vertical alignment setting, used by `Horizontal` and `Grid`.
@@ -68,17 +69,17 @@ impl Orientation {
 
 
 fn raw_handle_vec<B>(widgets: B) -> Vec<*mut ::iup_sys::Ihandle> where B: AsRef<[BaseWidget]> {
-    let mut raw_handles: Vec<_> = widgets.as_ref().iter().map(BaseWidget::ptr).collect();
+    let mut raw_handles: Vec<_> = widgets.as_ref().iter().cloned().map(BaseWidget::ptr).collect();
     raw_handles.push(::std::ptr::null_mut());
     raw_handles
 }
 
 /// A container type that makes no effort to arrange its children. Instead, they must be positioned
 /// manually.
-pub struct Absolute(BaseWidget);
+pub struct Absolute(IUPPtr);
 
 /// A container widget that lines up its children from left to right.
-pub struct Horizontal(BaseWidget);
+pub struct Horizontal(IUPPtr);
 
 impl Horizontal {
     /// Create a new horizontal container with the given vector or array of children, which may
@@ -90,25 +91,25 @@ impl Horizontal {
 
         unsafe { 
             let ptr = ::iup_sys::IupHboxv(raw_handles.as_mut_ptr());
-            Horizontal(BaseWidget::from_ptr(ptr))
+            Self::from_ptr(ptr)
         }
     }
 
-    pub fn set_valign(mut self, valign: VAlign) -> Self {
+    pub fn set_valign(self, valign: VAlign) -> Self {
         self.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_cstr());
         self
     }
 
-    pub fn set_elem_spacing_pixels(mut self, spacing: u32) -> Self {
+    pub fn set_elem_spacing_pixels(self, spacing: u32) -> Self {
         self.set_str_attribute(::attrs::GAP, spacing.to_string());
         self
     } 
 }
 
-impl_base_widget! { Horizontal, Horizontal, "hbox" }
+impl_widget! { Horizontal, "hbox" }
 
 /// A container widget that lines up its children from top to bottom.
-pub struct Vertical(BaseWidget);
+pub struct Vertical(IUPPtr);
 
 impl Vertical {
     pub fn new<C>(children: C) -> Vertical where C: AsRef<[BaseWidget]> {
@@ -116,26 +117,26 @@ impl Vertical {
 
         unsafe {
             let ptr = ::iup_sys::IupVboxv(raw_handles.as_mut_ptr());
-            Vertical(BaseWidget::from_ptr(ptr))
+            Self::from_ptr(ptr)
         }
     }
 
-    pub fn set_halign(mut self, halign: HAlign) -> Self {
+    pub fn set_halign(self, halign: HAlign) -> Self {
         self.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_cstr());
         self
     }
 
-    pub fn set_elem_spacing_pixels(mut self, spacing: u32) -> Self {
+    pub fn set_elem_spacing_pixels(self, spacing: u32) -> Self {
         self.set_str_attribute(::attrs::GAP, spacing.to_string());
         self
     }
 }
 
 
-impl_base_widget! { Vertical, Vertical, "vbox" }
+impl_widget! { Vertical, "vbox" }
 
 /// A container widget that lines up its children from left to right, and from top to bottom.
-pub struct Grid(BaseWidget);
+pub struct Grid(IUPPtr);
 
 impl Grid {
     pub fn new<C>(children: C) -> Grid where C: AsRef<[BaseWidget]> {
@@ -143,15 +144,15 @@ impl Grid {
 
         unsafe {
             let ptr = ::iup_sys::IupGridBoxv(raw_handles.as_mut_ptr());
-            Grid(BaseWidget::from_ptr(ptr))
+            Self::from_ptr(ptr)
         }
     }
-    pub fn set_valign(mut self, valign: VAlign) -> Self {
+    pub fn set_valign(self, valign: VAlign) -> Self {
         self.set_const_str_attribute(::attrs::ALIGNMENT_VERT, valign.as_cstr());
         self
     }
 
-    pub fn set_halign(mut self, halign: HAlign) -> Self {
+    pub fn set_halign(self, halign: HAlign) -> Self {
         self.set_const_str_attribute(::attrs::ALIGNMENT_HORI, halign.as_cstr());
         self
     }
@@ -162,7 +163,7 @@ impl Grid {
     /// * `Horizontal`: **row**
     ///
     /// before beginning the next one.
-    pub fn set_ndiv(mut self, ndiv: u32) -> Self {
+    pub fn set_ndiv(self, ndiv: u32) -> Self {
         self.set_int_attribute(::attrs::NUMDIV, ndiv as i32);
         self
     }
@@ -207,13 +208,13 @@ impl Grid {
     ///     </tr>
     /// </table>
     ///
-    pub fn set_orientation(mut self, orientation: Orientation) -> Self {
+    pub fn set_orientation(&mut self, orientation: Orientation) -> &mut Self {
         self.set_const_str_attribute(::attrs::ORIENTATION, orientation.as_cstr());
         self
     }
 }
 
-impl_base_widget! { Grid, Grid, "matrix" }
+impl_widget! { Grid, "matrix" }
 
 /// Convert a heterogeneous list of widgets into a `Vec<BaseWidget>`,
 /// suitable for passing to any function that takes `AsRef<[BaseWidget]>`, such as a constructor
@@ -221,7 +222,10 @@ impl_base_widget! { Grid, Grid, "matrix" }
 #[macro_export]
 macro_rules! children [
     // Accept the invocation with or without a final comma.
-    ($($child:expr),+,) => (vec![$($child.into()),+]);
-    ($($child:expr),+) => (vec![$($child.into()),+]);
+    ($($child:expr),+,) => (children![$($child),+]);
+    ($($child:expr),+) => ({
+        use ::kiss_ui::widget::Widget;
+        vec![$($child.to_base()),+]
+    });
     () => (vec![]);
 ];

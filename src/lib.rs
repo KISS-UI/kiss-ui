@@ -39,7 +39,7 @@ macro_rules! assert_kiss_running (
 );
 
 #[macro_use]
-pub mod base;
+pub mod widget;
 
 #[macro_use]
 pub mod utils;
@@ -51,6 +51,7 @@ mod attrs;
 #[macro_use]
 pub mod callback;
 
+pub mod base;
 pub mod button;
 pub mod container;
 pub mod dialog;
@@ -64,14 +65,24 @@ use std::collections::HashMap;
 use std::ptr;
 
 use base::BaseWidget;
+use dialog::Dialog;
 
 mod widget_prelude {
-    pub use base::{BaseWidget, ImplDetails};
+    pub use widget::{Widget, IUPWidget, Destroy};
+
+    pub type IUPPtr = *mut ::iup_sys::Ihandle;
 }
 
-/// The entry point for KISS-UI. The closure argument should initialize and return the main window
-/// dialog, at which point `.show()` will be called on it and the IUP event loop will begin
-/// running.
+pub mod prelude {
+    pub use base::BaseWidget;
+    pub use dialog::Dialog;
+    pub use container::Orientation;
+    pub use callback::{CallbackStatus, OnClick, OnShow, OnValueChange};
+
+    pub use widget::{Widget, Destroy};
+}
+
+/// The entry point for KISS-UI. The closure argument should initialize and call `.show()`.
 ///
 /// ##Blocks
 /// Until all KISS-UI dialogs are closed.
@@ -96,8 +107,9 @@ mod widget_prelude {
 ///
 /// Since no widget types are `Send`, this bound prevents this from happening without requiring
 /// all widget methods to check if they were invoked in a valid context.
-pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> dialog::Dialog + Send {
+pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> Dialog + Send {
     use ::utils::cstr::AsCStr;
+    use ::widget::Widget;
 
     unsafe { 
         assert!(iup_sys::IupOpen(ptr::null(), ptr::null()) == 0);
