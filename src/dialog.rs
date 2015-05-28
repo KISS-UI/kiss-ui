@@ -45,7 +45,7 @@ impl Dialog {
     }
 
     /// Set the title of this dialog, which will appear in the title bar of the native window.
-    pub fn set_title(mut self, title: &str) -> Self {
+    pub fn set_title<T: Into<String>>(mut self, title: T) -> Self {
         self.set_str_attribute(::attrs::TITLE, title);
         self
     }
