@@ -29,9 +29,6 @@ fn main() {
         dialog
             .set_title("Progressbar Test")
             .set_on_show(move |_| {
-                let regular = regular;
-                let dashed = dashed;
-
                 let on_timer_interval = move |timer: Timer|{
                     regular.add_value(0.1);
                     dashed.add_value(0.1);
