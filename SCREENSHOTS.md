@@ -29,10 +29,8 @@ Not sure why the borders are cut off on the other dialogs.
 ![](screenshots/GTK+/progress_test.png)
 
 ###`examples/show_image.rs`
-This needs a better image-generating function. Suggestions and/or PRs are very welcome.
 
-
-#####Note: resized to fit the page better.
+[Thanks to some wonderful suggestions on Reddit, this is no longer ugly!](http://www.reddit.com/r/rust/comments/37eezt/by_popular_demand_i_put_together_some_screenshots/crme9t8)
 
 ####Windows
 ![](screenshots/Windows/show_image.png)
