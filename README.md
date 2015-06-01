@@ -24,7 +24,7 @@ Contents
 
 Documentation
 -------------
-[`kiss-ui` docs hosted on Rust-CI](http://rust-ci.org/cybergeek94/kiss-ui/doc/kiss_ui/)
+[`kiss-ui` docs hosted on Github Pages](http://cybergeek94.github.io/kiss-ui)
 
 Usage
 -----
@@ -34,6 +34,15 @@ Simply add the following to your `Cargo.toml`:
 ```
 [dependencies.kiss-ui]
 git = "https://github.com/cybergeek94/kiss-ui"
+```
+
+Import KISS-UI's macros and common types:
+
+```rust
+#[macro_use]
+extern crate kiss_ui;
+
+use kiss_ui::prelude::*
 ```
 
 ####KISS-UI builds on all Rust release channels!

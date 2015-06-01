@@ -73,6 +73,7 @@ mod widget_prelude {
     pub type IUPPtr = *mut ::iup_sys::Ihandle;
 }
 
+/// A module that KISS-UI users can glob-import to get the most common types.
 pub mod prelude {
     pub use base::BaseWidget;
     pub use dialog::Dialog;

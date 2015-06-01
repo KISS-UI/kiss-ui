@@ -221,7 +221,7 @@ impl_widget! { Grid, "matrix" }
 /// for one of the container types.
 #[macro_export]
 macro_rules! children [
-    // Accept the invocation with or without a final comma.
+    // Accepts invocation with or without a final comma.
     ($($child:expr),+,) => (children![$($child),+]);
     ($($child:expr),+) => ({
         use ::kiss_ui::widget::Widget;

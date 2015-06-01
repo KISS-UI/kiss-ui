@@ -136,10 +136,6 @@ pub trait Widget: IUPWidget {
     }
 }
 
-
-#[doc(hidden)]
-impl<T: IUPWidget> Widget for T {}
-
 pub trait Destroy: Widget {
     fn destroy(self) {
         unsafe { iup_sys::IupDestroy(self.ptr()); }
@@ -264,7 +260,6 @@ impl<'a, T: IUPWidget> IUPWidget for &'a T {
     }
 }
 
-#[macro_export]
 macro_rules! impl_widget {
     ($ty:ident, $classname:expr) => {
         impl ::widget::IUPWidget for $ty {
@@ -288,6 +283,8 @@ macro_rules! impl_widget {
                 $classname
             }            
         }
+
+        impl ::widget::Widget for $ty {}
     
         impl Copy for $ty {}
         
