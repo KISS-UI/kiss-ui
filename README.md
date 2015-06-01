@@ -67,7 +67,8 @@ PRs amending or adding instructions for any platform are very welcome.
 You should **NEVER** place arbitrary files in your Windows install folder, no matter how benign.
 
 ####Static Linking
-TODO
+Static linking with IUP on Windows is not currently possible as it requires resource scripts (`.rc`) files from IUP to be compiled and linked in, which Rust does not currently support.
+
 ***
 ###Linux
 The Linux binary packages for IUP include both static and dynamic libraries. While efforts are underway to create up-to-date packages for various distributions' package managers, the currently most well supported methods of obtaining IUP binaries are to either compile them from source or download precompiled binaries from the creators.
