@@ -2,7 +2,7 @@
 
 use widget_prelude::*;
 
-use iup_sys::{Ihandle, CallbackReturn};
+use iup_sys::Ihandle;
 
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -28,12 +28,12 @@ impl CallbackStatus {
     }
 
     #[doc(hidden)]
-    pub fn to_cb_return(self) -> CallbackReturn {
+    pub fn to_cb_return(self) -> ::libc::c_int {
         use self::CallbackStatus::*;
 
         match self {
-            Close => CallbackReturn::Close,
-            Default => CallbackReturn::Default,
+            Close => ::iup_sys::IUP_CLOSE,
+            Default => ::iup_sys::IUP_DEFAULT,
             // _ => unimplemented!(),
         }
     }
@@ -69,7 +69,7 @@ macro_rules! callback_impl {
             );
 
             extern fn extern_callback(element: *mut ::iup_sys::Ihandle) 
-            -> ::iup_sys::CallbackReturn {
+            -> ::libc::c_int {
                 use ::callback::CallbackStatus;
 
                 let widget = unsafe { $self_ty::from_ptr(element) };

@@ -130,7 +130,7 @@ Pull requests for corrections and additions are welcome!
   * Supported Platforms: Windows (using Win32 APIs), Linux and Mac (using GTK+)
   * Native Look and Feel: **Yes**
   * "Hello, World!" LOC: **[18][kiss-ui-hw]**
-  * External Crates: **2** (including 1 local)
+  * External Crates: **2**
   * External Native Libs: 1
 * [PistonDevelopers/conrod][conrod]
   * Build Status: [![Build Status](https://travis-ci.org/PistonDevelopers/conrod.svg?branch=master)](https://travis-ci.org/PistonDevelopers/conrod)
