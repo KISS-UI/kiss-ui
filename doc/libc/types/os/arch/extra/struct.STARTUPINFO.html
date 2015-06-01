@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `STARTUPINFO` struct in crate `libc`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, STARTUPINFO">
+
+    <title>libc::types::os::arch::extra::STARTUPINFO - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../../../main.css">
+
+    <link rel="shortcut icon" href="https://doc.rust-lang.org/favicon.ico">
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        <a href='../../../../../libc/index.html'><img src='http://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png' alt='' width='100'></a>
+        <p class='location'><a href='../../../../index.html'>libc</a>::<wbr><a href='../../../index.html'>types</a>::<wbr><a href='../../index.html'>os</a>::<wbr><a href='../index.html'>arch</a>::<wbr><a href='index.html'>extra</a></p><script>window.sidebarCurrent = {name: 'STARTUPINFO', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../../../../index.html'>libc</a>::<wbr><a href='../../../index.html'>types</a>::<wbr><a href='../../index.html'>os</a>::<wbr><a href='../index.html'>arch</a>::<wbr><a href='index.html'>extra</a>::<wbr><a class='struct' href=''>STARTUPINFO</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-1126' class='srclink' href='../../../../../src/libc/lib.rs.html#1869-1888' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct STARTUPINFO {
+    pub cb: <a class='type' href='../../../../../libc/types/os/arch/extra/type.DWORD.html' title='libc::types::os::arch::extra::DWORD'>DWORD</a>,
+    pub lpReserved: <a class='type' href='../../../../../libc/types/os/arch/extra/type.LPWSTR.html' title='libc::types::os::arch::extra::LPWSTR'>LPWSTR</a>,
+    pub lpDesktop: <a class='type' href='../../../../../libc/types/os/arch/extra/type.LPWSTR.html' title='libc::types::os::arch::extra::LPWSTR'>LPWSTR</a>,
+    pub lpTitle: <a class='type' href='../../../../../libc/types/os/arch/extra/type.LPWSTR.html' title='libc::types::os::arch::extra::LPWSTR'>LPWSTR</a>,
+    pub dwX: <a class='type' href='../../../../../libc/types/os/arch/extra/type.DWORD.html' title='libc::types::os::arch::extra::DWORD'>DWORD</a>,
+    pub dwY: <a class='type' href='../../../../../libc/types/os/arch/extra/type.DWORD.html' title='libc::types::os::arch::extra::DWORD'>DWORD</a>,
+    pub dwXSize: <a class='type' href='../../../../../libc/types/os/arch/extra/type.DWORD.html' title='libc::types::os::arch::extra::DWORD'>DWORD</a>,
+    pub dwYSize: <a class='type' href='../../../../../libc/types/os/arch/extra/type.DWORD.html' title='libc::types::os::arch::extra::DWORD'>DWORD</a>,
+    pub dwXCountChars: <a class='type' href='../../../../../libc/types/os/arch/extra/type.DWORD.html' title='libc::types::os::arch::extra::DWORD'>DWORD</a>,
+    pub dwYCountCharts: <a class='type' href='../../../../../libc/types/os/arch/extra/type.DWORD.html' title='libc::types::os::arch::extra::DWORD'>DWORD</a>,
+    pub dwFillAttribute: <a class='type' href='../../../../../libc/types/os/arch/extra/type.DWORD.html' title='libc::types::os::arch::extra::DWORD'>DWORD</a>,
+    pub dwFlags: <a class='type' href='../../../../../libc/types/os/arch/extra/type.DWORD.html' title='libc::types::os::arch::extra::DWORD'>DWORD</a>,
+    pub wShowWindow: <a class='type' href='../../../../../libc/types/os/arch/extra/type.WORD.html' title='libc::types::os::arch::extra::WORD'>WORD</a>,
+    pub cbReserved2: <a class='type' href='../../../../../libc/types/os/arch/extra/type.WORD.html' title='libc::types::os::arch::extra::WORD'>WORD</a>,
+    pub lpReserved2: <a class='type' href='../../../../../libc/types/os/arch/extra/type.LPBYTE.html' title='libc::types::os::arch::extra::LPBYTE'>LPBYTE</a>,
+    pub hStdInput: <a class='type' href='../../../../../libc/types/os/arch/extra/type.HANDLE.html' title='libc::types::os::arch::extra::HANDLE'>HANDLE</a>,
+    pub hStdOutput: <a class='type' href='../../../../../libc/types/os/arch/extra/type.HANDLE.html' title='libc::types::os::arch::extra::HANDLE'>HANDLE</a>,
+    pub hStdError: <a class='type' href='../../../../../libc/types/os/arch/extra/type.HANDLE.html' title='libc::types::os::arch::extra::HANDLE'>HANDLE</a>,
+}</pre><h2 class='fields'>Fields</h2>
+<table><tr class='stab '>
+                                  <td id='structfield.cb'><code>cb</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.lpReserved'><code>lpReserved</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.lpDesktop'><code>lpDesktop</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.lpTitle'><code>lpTitle</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.dwX'><code>dwX</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.dwY'><code>dwY</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.dwXSize'><code>dwXSize</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.dwYSize'><code>dwYSize</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.dwXCountChars'><code>dwXCountChars</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.dwYCountCharts'><code>dwYCountCharts</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.dwFillAttribute'><code>dwFillAttribute</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.dwFlags'><code>dwFlags</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.wShowWindow'><code>wShowWindow</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.cbReserved2'><code>cbReserved2</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.lpReserved2'><code>lpReserved2</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.hStdInput'><code>hStdInput</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.hStdOutput'><code>hStdOutput</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.hStdError'><code>hStdError</code></td><td></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../../../../libc/types/os/arch/extra/struct.STARTUPINFO.html' title='libc::types::os::arch::extra::STARTUPINFO'>STARTUPINFO</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../../../../libc/types/os/arch/extra/struct.STARTUPINFO.html' title='libc::types::os::arch::extra::STARTUPINFO'>STARTUPINFO</a></code></h4>
+<h4 id='method.clone_from' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div><h3 class='impl'><code>impl <a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Copy.html' title='core::marker::Copy'>Copy</a> for <a class='struct' href='../../../../../libc/types/os/arch/extra/struct.STARTUPINFO.html' title='libc::types::os::arch::extra::STARTUPINFO'>STARTUPINFO</a></code></h3><div class='impl-items'></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../../../../";
+        window.currentCrate = "libc";
+        window.playgroundUrl = "http://play.rust-lang.org/";
+    </script>
+    <script src="../../../../../jquery.js"></script>
+    <script src="../../../../../main.js"></script>
+    <script src="../../../../../playpen.js"></script>
+    <script async src="../../../../../search-index.js"></script>
+</body>
+</html>

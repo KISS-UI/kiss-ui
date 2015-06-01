@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Grid` struct in crate `kiss_ui`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Grid">
+
+    <title>kiss_ui::container::Grid - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../index.html'>kiss_ui</a>::<wbr><a href='index.html'>container</a></p><script>window.sidebarCurrent = {name: 'Grid', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>kiss_ui</a>::<wbr><a href='index.html'>container</a>::<wbr><a class='struct' href=''>Grid</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-2792' class='srclink' href='../../src/kiss_ui/container.rs.html#139' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Grid(_);</pre><div class='docblock'><p>A container widget that lines up its children from left to right, and from top to bottom.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../kiss_ui/container/struct.Grid.html' title='kiss_ui::container::Grid'>Grid</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>&lt;C&gt;(children: C) -&gt; <a class='struct' href='../../kiss_ui/container/struct.Grid.html' title='kiss_ui::container::Grid'>Grid</a> <span class='where'>where C: <a class='trait' href='http://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html' title='core::convert::AsRef'>AsRef</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>[<a class='struct' href='../../kiss_ui/base/struct.BaseWidget.html' title='kiss_ui::base::BaseWidget'>BaseWidget</a>]</a>&gt;</span></code></h4>
+<h4 id='method.set_valign' class='method'><code>fn <a href='#method.set_valign' class='fnname'>set_valign</a>(self, valign: <a class='enum' href='../../kiss_ui/container/enum.VAlign.html' title='kiss_ui::container::VAlign'>VAlign</a>) -&gt; Self</code></h4>
+<h4 id='method.set_halign' class='method'><code>fn <a href='#method.set_halign' class='fnname'>set_halign</a>(self, halign: <a class='enum' href='../../kiss_ui/container/enum.HAlign.html' title='kiss_ui::container::HAlign'>HAlign</a>) -&gt; Self</code></h4>
+<h4 id='method.set_ndiv' class='method'><code>fn <a href='#method.set_ndiv' class='fnname'>set_ndiv</a>(self, ndiv: <a href='http://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>) -&gt; Self</code></h4>
+<div class='docblock'><p>Based on the orientation, set the number of children to place in a:</p>
+
+<ul>
+<li><code>Vertial</code>: <strong>column</strong></li>
+<li><code>Horizontal</code>: <strong>row</strong></li>
+</ul>
+
+<p>before beginning the next one.</p>
+</div><h4 id='method.set_orientation' class='method'><code>fn <a href='#method.set_orientation' class='fnname'>set_orientation</a>(&amp;mut self, orientation: <a class='enum' href='../../kiss_ui/container/enum.Orientation.html' title='kiss_ui::container::Orientation'>Orientation</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Sets how children are distributed in the container.</p>
+
+<ul>
+<li><code>Vertical</code>: The container will fill columns first.</li>
+</ul>
+
+<p>Visual example (<code>ndiv=3</code> grid with 7 children):
+<table>
+    <tr>
+        <td>Child</td>
+        <td>Child</td>
+        <td>Child</td>
+    </tr>
+    <tr>
+        <td>Child</td>
+        <td>Child</td>
+    </tr>
+    <tr>
+        <td>Child</td>
+        <td>Child</td>
+    </tr>
+</table></p>
+
+<ul>
+<li><code>Horizontal</code>: The container will fill rows first. <strong>Default.</strong></li>
+</ul>
+
+<p>Visual example (<code>ndiv=3</code> grid with 7 children):
+<table>
+    <tr>
+        <td>Child</td>
+        <td>Child</td>
+        <td>Child</td>
+    </tr>
+    <tr>
+        <td>Child</td>
+        <td>Child</td>
+        <td>Child</td>
+    </tr>
+    <tr>
+        <td>Child</td>
+    </tr>
+</table></p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='../../kiss_ui/widget/trait.Widget.html' title='kiss_ui::widget::Widget'>Widget</a> for <a class='struct' href='../../kiss_ui/container/struct.Grid.html' title='kiss_ui::container::Grid'>Grid</a></code></h3><div class='impl-items'><h4 id='method.show' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.show' class='fnname'>show</a>(self) -&gt; Self</code></h4>
+<h4 id='method.hide' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.hide' class='fnname'>hide</a>(self) -&gt; Self</code></h4>
+<h4 id='method.set_visible' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.set_visible' class='fnname'>set_visible</a>(self, visible: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; Self</code></h4>
+<h4 id='method.set_enabled' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.set_enabled' class='fnname'>set_enabled</a>(self, enabled: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; Self</code></h4>
+<h4 id='method.set_position' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.set_position' class='fnname'>set_position</a>(self, x: <a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>, y: <a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>) -&gt; Self</code></h4>
+<h4 id='method.get_position' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.get_position' class='fnname'>get_position</a>(self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(<a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>, <a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>)</a></code></h4>
+<h4 id='method.set_name' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.set_name' class='fnname'>set_name</a>(self, name: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; Self</code></h4>
+<h4 id='method.get_name' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.get_name' class='fnname'>get_name</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt;</code></h4>
+<h4 id='method.get_sibling' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.get_sibling' class='fnname'>get_sibling</a>(self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../kiss_ui/base/struct.BaseWidget.html' title='kiss_ui::base::BaseWidget'>BaseWidget</a>&gt;</code></h4>
+<h4 id='method.get_parent' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.get_parent' class='fnname'>get_parent</a>(self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../kiss_ui/base/struct.BaseWidget.html' title='kiss_ui::base::BaseWidget'>BaseWidget</a>&gt;</code></h4>
+<h4 id='method.get_dialog' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.get_dialog' class='fnname'>get_dialog</a>(self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../kiss_ui/dialog/struct.Dialog.html' title='kiss_ui::dialog::Dialog'>Dialog</a>&gt;</code></h4>
+<h4 id='method.get_size_pixels' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.get_size_pixels' class='fnname'>get_size_pixels</a>(self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(<a href='http://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>, <a href='http://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>)</a></code></h4>
+<h4 id='method.store' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.store' class='fnname'>store</a>&lt;N: <a class='trait' href='http://doc.rust-lang.org/nightly/core/convert/trait.Into.html' title='core::convert::Into'>Into</a>&lt;<a class='struct' href='http://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;&gt;(self, name: N) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../kiss_ui/base/struct.BaseWidget.html' title='kiss_ui::base::BaseWidget'>BaseWidget</a>&gt;</code></h4>
+<h4 id='method.to_base' class='method'><code>fn <a href='../../kiss_ui/widget/trait.Widget.html#method.to_base' class='fnname'>to_base</a>(self) -&gt; <a class='struct' href='../../kiss_ui/base/struct.BaseWidget.html' title='kiss_ui::base::BaseWidget'>BaseWidget</a></code></h4>
+</div><h3 class='impl'><code>impl <a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Copy.html' title='core::marker::Copy'>Copy</a> for <a class='struct' href='../../kiss_ui/container/struct.Grid.html' title='kiss_ui::container::Grid'>Grid</a></code></h3><div class='impl-items'></div><h3 class='impl'><code>impl <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../kiss_ui/container/struct.Grid.html' title='kiss_ui::container::Grid'>Grid</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; Self</code></h4>
+<h4 id='method.clone_from' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "kiss_ui";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>

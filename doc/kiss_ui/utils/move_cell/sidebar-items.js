@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["MoveCell","A cell type that can move values into and out of a shared reference."]]});

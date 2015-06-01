@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["BaseWidget","A general widget type that can be specialized at runtime via `Downcast`."]],"trait":[["Downcast","A trait describing a widget's ability to be downcast from `BaseWidget`."]]});

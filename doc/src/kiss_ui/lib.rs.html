@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="Source to the Rust file `src\lib.rs`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang">
+
+    <title>lib.rs.html -- source</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+</pre><pre class='rust '>
+<span class='doccomment'>//! A UI framework for Rust based on the KISS principle: &quot;Keep It Simple, Stupid!&quot;</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! Built on top of the [IUP GUI library for C.][iup]</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! ##Note: &quot;valid KISS-UI context&quot;</span>
+<span class='doccomment'>//! All KISS-UI static widget methods will panic if called before `kiss_ui::show_gui()` is invoked or</span>
+<span class='doccomment'>//! after it returns. </span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! This is because the underlying IUP library has been either, respectively, not initialized yet </span>
+<span class='doccomment'>//! or already deinitialized, and attempting to interact with it in either situation will likely cause</span>
+<span class='doccomment'>//! undefined behavior.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! ##Note: This is a (technically) leaky abstraction.</span>
+<span class='doccomment'>//! Because IUP only frees all its allocations when it is deinitialized, all widgets created by KISS-UI</span>
+<span class='doccomment'>//! will remain in-memory until `kiss_ui::show_gui()` returns. While unbounded memory growth can</span>
+<span class='doccomment'>//! happen with complex applications, this should not be an issue for most use-cases.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! However, some types *do* allocate large chunks of memory, or other valuable system resources, </span>
+<span class='doccomment'>//! and should be manually freed when they are no longer being used. </span>
+<span class='doccomment'>//! This is most evident with the `Image` struct, which can allocate large backing buffers for image data.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! All types that should be manually freed expose a `.destroy()` method which should be called</span>
+<span class='doccomment'>//! when they are no longer being used. This can safely be called multiple times on clones of the</span>
+<span class='doccomment'>//! widget types^([citation needed]).</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! [iup]: http://webserver2.tecgraf.puc-rio.br/iup/</span>
+
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>libc</span>;
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>iup_sys</span>;
+
+
+<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>assert_kiss_running</span> (
+    () <span class='op'>=&gt;</span> (
+        <span class='macro'>assert</span><span class='macro'>!</span>(
+            ::<span class='ident'>kiss_running</span>(), 
+            <span class='string'>&quot;No KISS-UI widget methods may be called before `kiss_ui::show_gui()` is invoked or after it returns!&quot;</span>
+        )
+    )
+);
+
+<span class='attribute'>#[<span class='ident'>macro_use</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>widget</span>;
+
+<span class='attribute'>#[<span class='ident'>macro_use</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>utils</span>;
+
+<span class='comment'>// Internal use modules</span>
+<span class='kw'>mod</span> <span class='ident'>attrs</span>;
+
+<span class='comment'>// User-facing modules</span>
+<span class='attribute'>#[<span class='ident'>macro_use</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>callback</span>;
+
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>base</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>button</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>container</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>dialog</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>image</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>progress</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>text</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>timer</span>;
+
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cell</span>::{<span class='ident'>Cell</span>, <span class='ident'>RefCell</span>};
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ptr</span>;
+
+<span class='kw'>use</span> <span class='ident'>base</span>::<span class='ident'>BaseWidget</span>;
+<span class='kw'>use</span> <span class='ident'>dialog</span>::<span class='ident'>Dialog</span>;
+
+<span class='kw'>mod</span> <span class='ident'>widget_prelude</span> {
+    <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>widget</span>::{<span class='ident'>Widget</span>, <span class='ident'>IUPWidget</span>, <span class='ident'>Destroy</span>};
+
+    <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>IUPPtr</span> <span class='op'>=</span> <span class='op'>*</span><span class='kw-2'>mut</span> ::<span class='ident'>iup_sys</span>::<span class='ident'>Ihandle</span>;
+}
+
+<span class='doccomment'>/// A module that KISS-UI users can glob-import to get the most common types.</span>
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>prelude</span> {
+    <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>base</span>::<span class='ident'>BaseWidget</span>;
+    <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>dialog</span>::<span class='ident'>Dialog</span>;
+    <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>container</span>::<span class='ident'>Orientation</span>;
+    <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>callback</span>::{<span class='ident'>CallbackStatus</span>, <span class='ident'>OnClick</span>, <span class='ident'>OnShow</span>, <span class='ident'>OnValueChange</span>};
+
+    <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>widget</span>::{<span class='ident'>Widget</span>, <span class='ident'>Destroy</span>};
+}
+
+<span class='doccomment'>/// The entry point for KISS-UI. The closure argument should initialize and call `.show()`.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// ##Blocks</span>
+<span class='doccomment'>/// Until all KISS-UI dialogs are closed.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// ##Warning</span>
+<span class='doccomment'>/// No static widget methods from this crate may be called before this function is</span>
+<span class='doccomment'>/// invoked or after it returns, with the exception of the closure passed to this function.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// While this function is blocked and the IUP event loop is running, any reachable code is</span>
+<span class='doccomment'>/// considered a &quot;valid KISS-UI context&quot; and may create and interact with widgets and dialogs.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// After it returns, IUP is deinitialized and all static widget methods will panic to avoid</span>
+<span class='doccomment'>/// undefined behavior.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// ##Note: `Send` bound</span>
+<span class='doccomment'>/// This closure will be called in the same thread where `show_gui()` is invoked. No threading is</span>
+<span class='doccomment'>/// involved.</span>
+<span class='doccomment'>/// </span>
+<span class='doccomment'>/// However, without the `Send` bound it would be possible to move widget types outside</span>
+<span class='doccomment'>/// of the closure with safe code and interact with them after IUP has been deinitialized, </span>
+<span class='doccomment'>/// which would cause undefined behavior. </span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// Since no widget types are `Send`, this bound prevents this from happening without requiring</span>
+<span class='doccomment'>/// all widget methods to check if they were invoked in a valid context.</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>show_gui</span><span class='op'>&lt;</span><span class='ident'>F</span><span class='op'>&gt;</span>(<span class='ident'>init_fn</span>: <span class='ident'>F</span>) <span class='kw'>where</span> <span class='ident'>F</span>: <span class='ident'>FnOnce</span>() <span class='op'>-&gt;</span> <span class='ident'>Dialog</span> <span class='op'>+</span> <span class='ident'>Send</span> {
+    <span class='kw'>use</span> ::<span class='ident'>utils</span>::<span class='ident'>cstr</span>::<span class='ident'>AsCStr</span>;
+    <span class='kw'>use</span> ::<span class='ident'>widget</span>::<span class='ident'>Widget</span>;
+
+    <span class='kw'>unsafe</span> { 
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>iup_sys</span>::<span class='ident'>IupOpen</span>(<span class='ident'>ptr</span>::<span class='ident'>null</span>(), <span class='ident'>ptr</span>::<span class='ident'>null</span>()) <span class='op'>==</span> <span class='number'>0</span>);
+        <span class='comment'>// Force IUP to always use UTF-8</span>
+        <span class='ident'>iup_sys</span>::<span class='ident'>IupSetGlobal</span>(::<span class='ident'>attrs</span>::<span class='ident'>UTF8_MODE</span>.<span class='ident'>as_cstr</span>(), ::<span class='ident'>attrs</span>::<span class='ident'>values</span>::<span class='ident'>YES</span>.<span class='ident'>as_cstr</span>());
+    }
+
+    <span class='ident'>KISS_RUNNING</span>.<span class='ident'>with</span>(<span class='op'>|</span><span class='ident'>state</span><span class='op'>|</span> <span class='ident'>state</span>.<span class='ident'>set</span>(<span class='boolval'>true</span>));
+
+    <span class='ident'>init_fn</span>().<span class='ident'>show</span>();
+
+    <span class='kw'>unsafe</span> { 
+        <span class='ident'>iup_sys</span>::<span class='ident'>IupMainLoop</span>();
+        <span class='ident'>iup_sys</span>::<span class='ident'>IupClose</span>();
+    }
+
+    <span class='ident'>KISS_RUNNING</span>.<span class='ident'>with</span>(<span class='op'>|</span><span class='ident'>state</span><span class='op'>|</span> <span class='ident'>state</span>.<span class='ident'>set</span>(<span class='boolval'>false</span>));
+
+    <span class='comment'>// Evict the widget store and let it deallocate.</span>
+    <span class='ident'>WIDGET_STORE</span>.<span class='ident'>with</span>(<span class='op'>|</span><span class='ident'>store</span><span class='op'>|</span> {
+        <span class='op'>*</span><span class='ident'>store</span>.<span class='ident'>borrow_mut</span>() <span class='op'>=</span> <span class='ident'>HashMap</span>::<span class='ident'>new</span>();
+    });
+}
+
+<span class='kw'>fn</span> <span class='ident'>kiss_running</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+    <span class='ident'>KISS_RUNNING</span>.<span class='ident'>with</span>(<span class='op'>|</span><span class='ident'>state</span><span class='op'>|</span> <span class='ident'>state</span>.<span class='ident'>get</span>())
+}
+
+<span class='macro'>thread_local</span><span class='macro'>!</span> { <span class='kw'>static</span> <span class='ident'>KISS_RUNNING</span>: <span class='ident'>Cell</span><span class='op'>&lt;</span><span class='ident'>bool</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>Cell</span>::<span class='ident'>new</span>(<span class='boolval'>false</span>) }
+
+<span class='macro'>thread_local</span><span class='macro'>!</span> { <span class='kw'>static</span> <span class='ident'>WIDGET_STORE</span>: <span class='ident'>RefCell</span><span class='op'>&lt;</span><span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>BaseWidget</span><span class='op'>&gt;&gt;</span> <span class='op'>=</span> <span class='ident'>RefCell</span>::<span class='ident'>new</span>(<span class='ident'>HashMap</span>::<span class='ident'>new</span>()) } 
+</pre>
+</section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "kiss_ui";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>

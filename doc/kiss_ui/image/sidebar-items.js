@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["transmute_buffer_rgb","Cast a slice of bytes to a slice of 3-byte tuples without copying."],["transmute_buffer_rgba","Cast a slice of bytes to a slice of 4-byte tuples without copying."]],"struct":[["Image","An image buffer allocated by IUP."]],"trait":[["ImageContainer","A trait describing an object that can render an image within itself."]]});

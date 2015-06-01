@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Destroy",""],["Widget","Trait implemented for all widget types."]]});

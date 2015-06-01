@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Button","A button that can be clicked momentarily and invoke a callback when this happens."]]});

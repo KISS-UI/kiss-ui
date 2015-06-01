@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["ProgressBar","A widget that renders a bar which fills as its set value approaches a maximum."]]});

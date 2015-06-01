@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `container` mod in crate `kiss_ui`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, container">
+
+    <title>kiss_ui::container - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../index.html'>kiss_ui</a></p><script>window.sidebarCurrent = {name: 'container', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>kiss_ui</a>::<wbr><a class='mod' href=''>container</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-2135' class='srclink' href='../../src/kiss_ui/container.rs.html#1-231' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Assorted types that can contain multiple widgets.</p>
+
+<p>All container types can be nested.</p>
+
+<p>Use the <code>children!{}</code> macro in this crate to convert a heterogeneous list of widgets into a
+<code>Vec&lt;BaseWidget&gt;</code> for the container constructors.</p>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Absolute.html'
+                               title='kiss_ui::container::Absolute'>Absolute</a></td>
+                        <td class='docblock short'>
+                             <p>A container type that makes no effort to arrange its children. Instead, they must be positioned
+manually.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Grid.html'
+                               title='kiss_ui::container::Grid'>Grid</a></td>
+                        <td class='docblock short'>
+                             <p>A container widget that lines up its children from left to right, and from top to bottom.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Horizontal.html'
+                               title='kiss_ui::container::Horizontal'>Horizontal</a></td>
+                        <td class='docblock short'>
+                             <p>A container widget that lines up its children from left to right.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Vertical.html'
+                               title='kiss_ui::container::Vertical'>Vertical</a></td>
+                        <td class='docblock short'>
+                             <p>A container widget that lines up its children from top to bottom.</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.HAlign.html'
+                               title='kiss_ui::container::HAlign'>HAlign</a></td>
+                        <td class='docblock short'>
+                             <p>Horizontal alignment setting, used by <code>Vertical</code> and <code>Grid</code>.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Orientation.html'
+                               title='kiss_ui::container::Orientation'>Orientation</a></td>
+                        <td class='docblock short'>
+                             <p>The behavior of this enum depends on its point of use.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.VAlign.html'
+                               title='kiss_ui::container::VAlign'>VAlign</a></td>
+                        <td class='docblock short'>
+                             <p>Vertical alignment setting, used by <code>Horizontal</code> and <code>Grid</code>.</p>
+
+                        </td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "kiss_ui";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>
