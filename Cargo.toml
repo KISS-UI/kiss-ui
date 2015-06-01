@@ -3,8 +3,6 @@ name = "kiss-ui"
 version = "0.1.0"
 authors = ["Austin Bonander <austin.bonander@gmail.com>"]
 
-[dependencies.iup-sys]
-path = "iup-sys/"
-
 [dependencies]
 libc = "*"
+iup-sys = "*"
