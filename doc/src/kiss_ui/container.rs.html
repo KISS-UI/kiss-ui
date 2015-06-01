@@ -495,7 +495,7 @@
 <span class='doccomment'>/// for one of the container types.</span>
 <span class='attribute'>#[<span class='ident'>macro_export</span>]</span>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>children</span> [
-    <span class='comment'>// Accept the invocation with or without a final comma.</span>
+    <span class='comment'>// Accepts invocation with or without a final comma.</span>
     ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>child</span>:<span class='ident'>expr</span>),<span class='op'>+</span>,) <span class='op'>=&gt;</span> (<span class='macro'>children</span><span class='macro'>!</span>[$(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>child</span>),<span class='op'>+</span>]);
     ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>child</span>:<span class='ident'>expr</span>),<span class='op'>+</span>) <span class='op'>=&gt;</span> ({
         <span class='kw'>use</span> ::<span class='ident'>kiss_ui</span>::<span class='ident'>widget</span>::<span class='ident'>Widget</span>;
