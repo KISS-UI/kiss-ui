@@ -2,6 +2,8 @@
 
 use widget_prelude::*;
 
+use ::KISSContext;
+
 use std::borrow::Borrow;
 
 /// A general widget type that can be specialized at runtime via `Downcast`.
@@ -17,11 +19,7 @@ impl BaseWidget {
     /// ##Panics
     /// If called before `kiss_ui::show_gui()` is invoked or after it returns.
     pub fn load<N: Borrow<str>>(name: N) -> Option<BaseWidget> {
-        assert_kiss_running!();
-
-        ::WIDGET_STORE.with(|store| {
-            store.borrow().get(name.borrow()).cloned()
-        })
+        KISSContext::load_widget(&name) 
     }
 
     /// Attempt to downcast this `BaseWidget` to a more specialized widget type.

@@ -32,7 +32,7 @@ extern crate iup_sys;
 macro_rules! assert_kiss_running (
     () => (
         assert!(
-            ::kiss_running(), 
+            ::KISS_RUNNING.load(::std::sync::atomic::Ordering::Acquire), 
             "No KISS-UI widget methods may be called before `kiss_ui::show_gui()` is invoked or after it returns!"
         )
     )
@@ -60,17 +60,24 @@ pub mod progress;
 pub mod text;
 pub mod timer;
 
+use std::borrow::Borrow;
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::ptr;
+use std::rc::Rc;
+use std::sync::atomic::{AtomicBool, ATOMIC_BOOL_INIT, Ordering};
 
 use base::BaseWidget;
 use dialog::Dialog;
+use widget::Widget;
+
+use utils::cstr::AsCStr;
+
+use widget_prelude::IUPPtr;
 
 mod widget_prelude {
-    pub use widget::{Widget, IUPWidget, Destroy};
-
-    pub type IUPPtr = *mut ::iup_sys::Ihandle;
+    pub use widget::{Widget, IUPWidget, Destroy, WidgetStr};
+    pub type IUPPtr = *mut ::iup_sys::Ihandle; 
 }
 
 /// A module that KISS-UI users can glob-import to get the most common types.
@@ -82,6 +89,70 @@ pub mod prelude {
 
     pub use widget::{Widget, Destroy};
 }
+
+static KISS_RUNNING: AtomicBool = ATOMIC_BOOL_INIT;
+
+thread_local! { static CONTEXT: KISSContext = KISSContext::default() }
+
+#[derive(Default)]
+struct KISSContext {
+    widget_store: RefCell<HashMap<String, BaseWidget>>,
+    // FIXME: use Rc<()> once Rc::is_unique stabilizes
+    borrowed_strs: RefCell<HashMap<IUPPtr, HashMap<&'static str, Rc<Cell<usize>>>>>,
+}
+
+impl KISSContext {
+    fn assert_str_not_borrowed(widget: IUPPtr, str_: &'static str) {
+        assert_kiss_running!();
+
+        let is_borrowed = CONTEXT.with(|context|
+            context.borrowed_strs.borrow()
+                .get(&widget)
+                .and_then(|widget_strs| 
+                     widget_strs.get(str_)
+                        .map(|refcount| refcount.get() != 0)
+                )
+                .unwrap_or(false)
+        );
+
+        assert!(
+            is_borrowed, 
+            "Cannot update the value of a string property of a widget if it's been previously borrowed!"
+        );                
+    }
+
+    fn str_refcount(widget: IUPPtr, str_: &'static str) -> Rc<Cell<usize>> {
+        assert_kiss_running!();
+
+        CONTEXT.with(|context|
+            context.borrowed_strs.borrow_mut()
+                .entry(widget).or_insert_with(HashMap::new)
+                .entry(str_).or_insert_with(|| Rc::new(Cell::new(0)))
+                .clone()
+        )        
+    }
+
+    fn store_widget<N: Into<String>, W: Widget>(name: N, widget: W) -> Option<BaseWidget> {
+        CONTEXT.with(|context|
+            context.widget_store.borrow_mut()
+                .insert(name.into(), widget.to_base())
+        )
+    }
+
+    fn load_widget<N: Borrow<str>>(name: &N) -> Option<BaseWidget> {
+        CONTEXT.with(|context|
+            context.widget_store.borrow().get(name.borrow()).cloned()
+        )
+    }
+
+    unsafe fn clear() {
+        CONTEXT.with(|context| {
+            context.widget_store.borrow_mut().clear();
+            context.borrowed_strs.borrow_mut().clear();
+        })
+    }
+}
+
 
 /// The entry point for KISS-UI. The closure argument should initialize and call `.show()`.
 ///
@@ -109,36 +180,27 @@ pub mod prelude {
 /// Since no widget types are `Send`, this bound prevents this from happening without requiring
 /// all widget methods to check if they were invoked in a valid context.
 pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> Dialog + Send {
-    use ::utils::cstr::AsCStr;
-    use ::widget::Widget;
+    assert!(
+        !KISS_RUNNING.compare_and_swap(false, true, Ordering::SeqCst), 
+        "KISS-UI may only be running (in `kiss_ui::show_gui()`) in one thread at a time!"
+    );
 
     unsafe { 
         assert!(iup_sys::IupOpen(ptr::null(), ptr::null()) == 0);
         // Force IUP to always use UTF-8
         iup_sys::IupSetGlobal(::attrs::UTF8_MODE.as_cstr(), ::attrs::values::YES.as_cstr());
-    }
-
-    KISS_RUNNING.with(|state| state.set(true));
+    }   
 
     init_fn().show();
 
     unsafe { 
         iup_sys::IupMainLoop();
         iup_sys::IupClose();
+        KISSContext::clear();
     }
 
-    KISS_RUNNING.with(|state| state.set(false));
-
-    // Evict the widget store and let it deallocate.
-    WIDGET_STORE.with(|store| {
-        *store.borrow_mut() = HashMap::new();
-    });
+    KISS_RUNNING.store(false, Ordering::SeqCst); 
 }
 
-fn kiss_running() -> bool {
-    KISS_RUNNING.with(|state| state.get())
-}
 
-thread_local! { static KISS_RUNNING: Cell<bool> = Cell::new(false) }
 
-thread_local! { static WIDGET_STORE: RefCell<HashMap<String, BaseWidget>> = RefCell::new(HashMap::new()) } 
