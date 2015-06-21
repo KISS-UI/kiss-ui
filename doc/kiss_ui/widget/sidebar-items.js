@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["Destroy",""],["Widget","Trait implemented for all widget types."]]});
+initSidebarItems({"struct":[["WidgetStr","A string slice borrowed from a widget's metadata. Can be dereferenced to `&str`."]],"trait":[["Destroy",""],["Widget","Trait implemented for all widget types."]]});

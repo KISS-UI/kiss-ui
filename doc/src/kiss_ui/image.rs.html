@@ -140,10 +140,14 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Renderable image buffers.</span>
 
 <span class='kw'>use</span> <span class='ident'>widget_prelude</span>::<span class='op'>*</span>;
+
+<span class='kw'>use</span> <span class='ident'>base</span>::<span class='ident'>Downcast</span>;
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>mem</span>;
 
@@ -199,7 +203,7 @@
 
 <span class='kw'>impl</span> <span class='ident'>Destroy</span> <span class='kw'>for</span> <span class='ident'>Image</span> {}
 
-<span class='macro'>impl_widget</span><span class='macro'>!</span>{ <span class='ident'>Image</span>, <span class='string'>&quot;image&quot;</span> }
+<span class='macro'>impl_widget</span><span class='macro'>!</span> { <span class='ident'>Image</span>, [<span class='string'>&quot;image&quot;</span>, <span class='string'>&quot;imagergb&quot;</span>, <span class='string'>&quot;imagergba&quot;</span>] }
 
 <span class='doccomment'>/// Cast a slice of bytes to a slice of 3-byte tuples without copying.</span>
 <span class='doccomment'>///</span>

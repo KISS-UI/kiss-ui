@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-18' class='srclink' href='../../src/kiss_ui/widget.rs.html#16-137' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-32' class='srclink' href='../../src/kiss_ui/widget.rs.html#25-147' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait Widget: IUPWidget {
     fn <a href='#method.show' class='fnname'>show</a>(self) -&gt; Self { ... }
     fn <a href='#method.hide' class='fnname'>hide</a>(self) -&gt; Self { ... }
@@ -54,7 +54,7 @@
     fn <a href='#method.set_position' class='fnname'>set_position</a>(self, x: <a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>, y: <a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>) -&gt; Self { ... }
     fn <a href='#method.get_position' class='fnname'>get_position</a>(self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(<a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>, <a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>)</a> { ... }
     fn <a href='#method.set_name' class='fnname'>set_name</a>(self, name: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; Self { ... }
-    fn <a href='#method.get_name' class='fnname'>get_name</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt; { ... }
+    fn <a href='#method.get_name' class='fnname'>get_name</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../kiss_ui/widget/struct.WidgetStr.html' title='kiss_ui::widget::WidgetStr'>WidgetStr</a>&gt; { ... }
     fn <a href='#method.get_sibling' class='fnname'>get_sibling</a>(self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../kiss_ui/base/struct.BaseWidget.html' title='kiss_ui::base::BaseWidget'>BaseWidget</a>&gt; { ... }
     fn <a href='#method.get_parent' class='fnname'>get_parent</a>(self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../kiss_ui/base/struct.BaseWidget.html' title='kiss_ui::base::BaseWidget'>BaseWidget</a>&gt; { ... }
     fn <a href='#method.get_dialog' class='fnname'>get_dialog</a>(self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../kiss_ui/dialog/struct.Dialog.html' title='kiss_ui::dialog::Dialog'>Dialog</a>&gt; { ... }
@@ -95,7 +95,11 @@ widget&#39;s actual relative position.</p>
 </div><h3 id='method.set_name' class='method stab '><code>fn <a href='#method.set_name' class='fnname'>set_name</a>(self, name: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; Self</code></h3><div class='docblock'><p>Set the name of the widget so it can be found within its parent.</p>
 
 <p>Does nothing if the widget does not support having a name.</p>
-</div><h3 id='method.get_name' class='method stab '><code>fn <a href='#method.get_name' class='fnname'>get_name</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt;</code></h3><div class='docblock'><p>Get the name of this widget, if the widget supports having a name and one is set.</p>
+
+<h2 id="panics" class='section-header'><a
+                           href="#panics">Panics</a></h2>
+<p>If any <code>WidgetStr</code> instances from <code>self.get_name()</code> are still reachable.</p>
+</div><h3 id='method.get_name' class='method stab '><code>fn <a href='#method.get_name' class='fnname'>get_name</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../kiss_ui/widget/struct.WidgetStr.html' title='kiss_ui::widget::WidgetStr'>WidgetStr</a>&gt;</code></h3><div class='docblock'><p>Get the name of this widget, if the widget supports having a name and one is set.</p>
 </div><h3 id='method.get_sibling' class='method stab '><code>fn <a href='#method.get_sibling' class='fnname'>get_sibling</a>(self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../kiss_ui/base/struct.BaseWidget.html' title='kiss_ui::base::BaseWidget'>BaseWidget</a>&gt;</code></h3><div class='docblock'><p>Get the next child in the parent after this widget, based on the order in which they were
 added.</p>
 
