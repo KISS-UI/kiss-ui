@@ -2,6 +2,8 @@
 
 use widget_prelude::*;
 
+use base::Downcast;
+
 use std::mem;
 
 /// An image buffer allocated by IUP.
@@ -56,7 +58,7 @@ impl Image {
 
 impl Destroy for Image {}
 
-impl_widget!{ Image, "image" }
+impl_widget! { Image, ["image", "imagergb", "imagergba"] }
 
 /// Cast a slice of bytes to a slice of 3-byte tuples without copying.
 ///

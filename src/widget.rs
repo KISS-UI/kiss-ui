@@ -156,8 +156,6 @@ pub trait IUPWidget: Copy {
 
     fn ptr(self) -> *mut iup_sys::Ihandle;
 
-    fn target_classname() -> &'static str;
-
     fn classname(&self) -> &CStr {
         unsafe { CStr::from_ptr(iup_sys::IupGetClassName(self.ptr())) } 
     }
@@ -254,14 +252,30 @@ impl<'a, T: IUPWidget> IUPWidget for &'a T {
     fn ptr(self) -> *mut iup_sys::Ihandle {
         (*self).ptr()
     }
-
-    fn target_classname() -> &'static str {
-        T::target_classname()
-    }
 }
 
 macro_rules! impl_widget {
+    ($ty:ident, [$($classname:expr),+]) => {
+        impl_widget!($ty);
+
+        impl ::base::Downcast for $ty {
+            fn can_downcast(base: &::base::BaseWidget) -> bool {
+                [$($classname.as_bytes()),+].contains(&base.classname().to_bytes())
+            }
+        }
+    };
+
     ($ty:ident, $classname:expr) => {
+        impl_widget!($ty);
+
+        impl ::base::Downcast for $ty {
+            fn can_downcast(base: &::base::BaseWidget) -> bool {
+                $classname.as_bytes() == base.classname().to_bytes()
+            }
+        }
+    };
+
+    ($ty:ident) => {
         impl ::widget::IUPWidget for $ty {
             unsafe fn from_ptr(ptr: ::widget_prelude::IUPPtr) -> Self {
                 assert!(
@@ -277,11 +291,7 @@ macro_rules! impl_widget {
 
             fn ptr(self) -> ::widget_prelude::IUPPtr {
                 self.0
-            }
-
-            fn target_classname() -> &'static str {
-                $classname
-            }            
+            }      
         }
 
         impl ::widget::Widget for $ty {}
