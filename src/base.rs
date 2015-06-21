@@ -33,7 +33,7 @@ impl BaseWidget {
     }
 }
 
-impl_widget! { BaseWidget, "not an IUP widget!" }
+impl_widget! { BaseWidget }
 
 /// A trait describing a widget's ability to be downcast from `BaseWidget`.
 pub trait Downcast: Widget {
@@ -55,10 +55,6 @@ pub trait Downcast: Widget {
     }
 
     #[doc(hidden)]
-    fn can_downcast(base: &BaseWidget) -> bool {
-        Self::target_classname().as_bytes() == base.classname().to_bytes()
-    }
+    fn can_downcast(base: &BaseWidget) -> bool;
 }
-
-impl<T: Widget> Downcast for T {}
 
