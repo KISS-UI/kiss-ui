@@ -2,6 +2,8 @@
 
 use widget_prelude::*;
 
+use ::KISSContext;
+
 use std::borrow::Borrow;
 
 /// A general widget type that can be specialized at runtime via `Downcast`.
@@ -17,11 +19,7 @@ impl BaseWidget {
     /// ##Panics
     /// If called before `kiss_ui::show_gui()` is invoked or after it returns.
     pub fn load<N: Borrow<str>>(name: N) -> Option<BaseWidget> {
-        assert_kiss_running!();
-
-        ::WIDGET_STORE.with(|store| {
-            store.borrow().get(name.borrow()).cloned()
-        })
+        KISSContext::load_widget(&name) 
     }
 
     /// Attempt to downcast this `BaseWidget` to a more specialized widget type.
@@ -33,7 +31,7 @@ impl BaseWidget {
     }
 }
 
-impl_widget! { BaseWidget, "not an IUP widget!" }
+impl_widget! { BaseWidget }
 
 /// A trait describing a widget's ability to be downcast from `BaseWidget`.
 pub trait Downcast: Widget {
@@ -55,10 +53,6 @@ pub trait Downcast: Widget {
     }
 
     #[doc(hidden)]
-    fn can_downcast(base: &BaseWidget) -> bool {
-        Self::target_classname().as_bytes() == base.classname().to_bytes()
-    }
+    fn can_downcast(base: &BaseWidget) -> bool;
 }
-
-impl<T: Widget> Downcast for T {}
 

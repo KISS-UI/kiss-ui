@@ -27,14 +27,18 @@ impl Label {
     }
 
     /// Update the text of this label.
+    ///
+    /// ##Panics
+    /// If any `WidgetStr` instances from `self.get_text()` are still reachable.
     pub fn set_text(self, text: &str) -> Self {
         self.set_str_attribute(::attrs::TITLE, text);
         self
     }
 
     /// Get the text of this label.
-    pub fn get_text(&self) -> &str {
-        self.get_str_attribute(::attrs::TITLE).unwrap_or("")
+    pub fn get_text(&self) -> WidgetStr {
+        self.get_str_attribute(::attrs::TITLE)
+            .expect("This widget should have a text pointer even if it's empty!")
     }
 }
 
@@ -83,14 +87,18 @@ impl TextBox {
     }
 
     /// Set the text of this textbox.
+    ///
+    /// ##Panics
+    /// If any `WidgetStr` instances from `self.get_text()` are still reachable.
     pub fn set_text(self, value: &str) -> Self {
         self.set_str_attribute(::attrs::VALUE, value);
         self
     }
 
     /// Get the text value of this textbox.
-    pub fn get_text(&self) -> &str {
-        self.get_str_attribute(::attrs::VALUE).unwrap_or("")
+    pub fn get_text(&self) -> WidgetStr {
+        self.get_str_attribute(::attrs::VALUE)
+            .expect("This string should be present even if it's empty!")
     }    
 }
 

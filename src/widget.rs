@@ -4,11 +4,20 @@ use utils::cstr::AsCStr;
 
 use base::{BaseWidget, Downcast};
 use dialog::Dialog;
+use widget_prelude::IUPPtr;
+
+use ::KISSContext;
 
 use iup_sys;
 
+use std::borrow::Borrow;
+use std::cell::Cell;
 use std::ffi::{CStr, CString};
+use std::fmt::{self, Debug, Display, Formatter};
+use std::hash::{Hash, Hasher};
+use std::ops::Deref;
 use std::ptr;
+use std::rc::Rc;
 
 /// Trait implemented for all widget types.
 ///
@@ -71,13 +80,16 @@ pub trait Widget: IUPWidget {
     /// Set the name of the widget so it can be found within its parent.
     ///
     /// Does nothing if the widget does not support having a name.
+    ///
+    /// ##Panics
+    /// If any `WidgetStr` instances from `self.get_name()` are still reachable.
     fn set_name(self, name: &str) -> Self {
         self.set_str_attribute(::attrs::NAME, name);
         self
     }
 
     /// Get the name of this widget, if the widget supports having a name and one is set.
-    fn get_name(&self) -> Option<&str> {
+    fn get_name(&self) -> Option<WidgetStr> {
         self.get_str_attribute(::attrs::NAME) 
     }  
 
@@ -126,9 +138,7 @@ pub trait Widget: IUPWidget {
     /// It may later be retrieved from any valid KISS-UI context 
     /// by calling `BaseWidget::load(name)`.
     fn store<N: Into<String>>(self, name: N) -> Option<BaseWidget> {
-        ::WIDGET_STORE.with(|store| {
-            store.borrow_mut().insert(name.into(), self.to_base())
-        })
+        KISSContext::store_widget(name, self)
     }
 
     fn to_base(self) -> BaseWidget {
@@ -138,15 +148,79 @@ pub trait Widget: IUPWidget {
 
 pub trait Destroy: Widget {
     fn destroy(self) {
-        unsafe { iup_sys::IupDestroy(self.ptr()); }
+        unsafe { 
+            iup_sys::IupDestroy(self.ptr()); 
+        }
     }
 }
 
+/// A string slice borrowed from a widget's metadata. Can be dereferenced to `&str`.
+///
+/// Tracks ownership of the string so that its pointer cannot be invalidated. Releases ownership
+/// on-drop.
+pub struct WidgetStr<'a> {
+    refcount: Rc<Cell<usize>>, 
+    data: &'a str,
+}
+
+impl<'a> Borrow<str> for WidgetStr<'a> {
+    fn borrow(&self) -> &str {
+        self.data
+    }
+}
+
+impl<'a> Debug for WidgetStr<'a> {
+    fn fmt(&self, fmt: &mut Formatter) -> Result<(), fmt::Error> {
+        <str as Debug>::fmt(self.data, fmt)
+    }
+}
+
+impl<'a> Display for WidgetStr<'a> {
+    fn fmt(&self, fmt: &mut Formatter) -> Result<(), fmt::Error> {
+        <str as Display>::fmt(self.data, fmt)
+    }
+}
+
+impl<'a> Hash for WidgetStr<'a> {
+    fn hash<H>(&self, hasher: &mut H) where H: Hasher {
+        self.data.hash(hasher)
+    } 
+}
+
+impl<'a> Deref for WidgetStr<'a> {
+    type Target = str;
+
+    fn deref<'b>(&'b self) -> &'b str {
+        self.data
+    }
+}
+
+impl<'a> Clone for WidgetStr<'a> {
+    fn clone(&self) -> Self {
+        let refcount = self.refcount.get();
+        self.refcount.set(refcount + 1);
+
+        WidgetStr {
+            refcount: self.refcount.clone(),
+            data: self.data,
+        }
+    }
+}
+
+impl<'a> Drop for WidgetStr<'a> {
+    fn drop(&mut self) {
+        let refcount = self.refcount.get();
+        self.refcount.set(refcount - 1);
+    }
+}
+
+
+
 #[doc(hidden)]
 pub trait IUPWidget: Copy {
-    unsafe fn from_ptr(ptr: *mut iup_sys::Ihandle) -> Self;
+    unsafe fn from_ptr(ptr: IUPPtr) -> Self;
 
-    unsafe fn from_ptr_opt(ptr: *mut iup_sys::Ihandle) -> Option<Self> {
+    unsafe fn from_ptr_opt(ptr: IUPPtr) -> Option<Self> {
         if !ptr.is_null() {
             Some(Self::from_ptr(ptr))
         } else {
@@ -154,20 +228,22 @@ pub trait IUPWidget: Copy {
         }
     }
 
-    fn ptr(self) -> *mut iup_sys::Ihandle;
-
-    fn target_classname() -> &'static str;
+    fn ptr(self) -> IUPPtr;
 
     fn classname(&self) -> &CStr {
         unsafe { CStr::from_ptr(iup_sys::IupGetClassName(self.ptr())) } 
     }
 
     fn set_str_attribute<V>(self, name: &'static str, val: V) where V: Into<String> {
+        KISSContext::assert_str_not_borrowed(self.ptr(), name);
+
         let c_val = CString::new(val.into()).unwrap();
         unsafe { iup_sys::IupSetStrAttribute(self.ptr(), name.as_cstr(), c_val.as_ptr()); }
     }
 
     fn set_opt_str_attribute<V>(self, name: &'static str, val: Option<V>) where V: Into<String> {
+        KISSContext::assert_str_not_borrowed(self.ptr(), name);
+
         let c_val = val.map(V::into).map(CString::new).map(Result::unwrap);
         unsafe { 
             iup_sys::IupSetStrAttribute(
@@ -180,10 +256,12 @@ pub trait IUPWidget: Copy {
     }
 
     fn set_const_str_attribute(self, name: &'static str, val: &'static str) {
+        KISSContext::assert_str_not_borrowed(self.ptr(), name);        
+
         unsafe { iup_sys::IupSetAttribute(self.ptr(), name.as_cstr(), val.as_cstr()); }
     }
 
-    fn get_str_attribute(&self, name: &'static str) -> Option<&str> {
+    fn get_str_attribute(&self, name: &'static str) -> Option<WidgetStr> {
         let ptr = unsafe { iup_sys::IupGetAttribute(self.ptr(), name.as_cstr()) };
 
         if !ptr.is_null() {
@@ -191,7 +269,12 @@ pub trait IUPWidget: Copy {
                 // Safe since we're controlling the lifetime
                 let c_str = CStr::from_ptr(ptr);
                 // We're forcing IUP to use UTF-8 
-                Some(::std::str::from_utf8_unchecked(c_str.to_bytes()))
+                let str_data = ::std::str::from_utf8_unchecked(c_str.to_bytes());
+
+                Some(WidgetStr {
+                    refcount: KISSContext::str_refcount(self.ptr(), name),
+                    data: str_data,
+                })
             }
         } else {
             None
@@ -254,14 +337,30 @@ impl<'a, T: IUPWidget> IUPWidget for &'a T {
     fn ptr(self) -> *mut iup_sys::Ihandle {
         (*self).ptr()
     }
-
-    fn target_classname() -> &'static str {
-        T::target_classname()
-    }
 }
 
 macro_rules! impl_widget {
+    ($ty:ident, [$($classname:expr),+]) => {
+        impl_widget!($ty);
+
+        impl ::base::Downcast for $ty {
+            fn can_downcast(base: &::base::BaseWidget) -> bool {
+                [$($classname.as_bytes()),+].contains(&base.classname().to_bytes())
+            }
+        }
+    };
+
     ($ty:ident, $classname:expr) => {
+        impl_widget!($ty);
+
+        impl ::base::Downcast for $ty {
+            fn can_downcast(base: &::base::BaseWidget) -> bool {
+                $classname.as_bytes() == base.classname().to_bytes()
+            }
+        }
+    };
+
+    ($ty:ident) => {
         impl ::widget::IUPWidget for $ty {
             unsafe fn from_ptr(ptr: ::widget_prelude::IUPPtr) -> Self {
                 assert!(
@@ -277,11 +376,7 @@ macro_rules! impl_widget {
 
             fn ptr(self) -> ::widget_prelude::IUPPtr {
                 self.0
-            }
-
-            fn target_classname() -> &'static str {
-                $classname
-            }            
+            }      
         }
 
         impl ::widget::Widget for $ty {}
