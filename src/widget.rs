@@ -80,6 +80,9 @@ pub trait Widget: IUPWidget {
     /// Set the name of the widget so it can be found within its parent.
     ///
     /// Does nothing if the widget does not support having a name.
+    ///
+    /// ##Panics
+    /// If any `WidgetStr` instances from `self.get_name()` are still reachable.
     fn set_name(self, name: &str) -> Self {
         self.set_str_attribute(::attrs::NAME, name);
         self

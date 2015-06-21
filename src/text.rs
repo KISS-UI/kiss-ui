@@ -27,6 +27,9 @@ impl Label {
     }
 
     /// Update the text of this label.
+    ///
+    /// ##Panics
+    /// If any `WidgetStr` instances from `self.get_text()` are still reachable.
     pub fn set_text(self, text: &str) -> Self {
         self.set_str_attribute(::attrs::TITLE, text);
         self
@@ -84,6 +87,9 @@ impl TextBox {
     }
 
     /// Set the text of this textbox.
+    ///
+    /// ##Panics
+    /// If any `WidgetStr` instances from `self.get_text()` are still reachable.
     pub fn set_text(self, value: &str) -> Self {
         self.set_str_attribute(::attrs::VALUE, value);
         self
