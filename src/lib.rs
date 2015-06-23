@@ -116,7 +116,7 @@ impl KISSContext {
         );
 
         assert!(
-            is_borrowed, 
+            !is_borrowed, 
             "Cannot update the value of a string property of a widget if it's been previously borrowed!"
         );                
     }
