@@ -210,7 +210,8 @@ impl<'a> Clone for WidgetStr<'a> {
 impl<'a> Drop for WidgetStr<'a> {
     fn drop(&mut self) {
         let refcount = self.refcount.get();
-        self.refcount.set(refcount - 1);
+        println!("refcount of '{}' was {}", self.data, refcount);
+        if refcount > 0 { self.refcount.set(refcount - 1);}
     }
 }
 
