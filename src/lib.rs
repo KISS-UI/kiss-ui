@@ -127,7 +127,7 @@ impl KISSContext {
         CONTEXT.with(|context|
             context.borrowed_strs.borrow_mut()
                 .entry(widget).or_insert_with(HashMap::new)
-                .entry(str_).or_insert_with(|| Rc::new(Cell::new(0)))
+                .entry(str_).or_insert_with(|| Rc::new(Cell::new(1)))
                 .clone()
         )        
     }
