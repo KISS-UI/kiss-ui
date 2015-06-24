@@ -90,8 +90,8 @@ pub trait Widget: IUPWidget {
 
     /// Get the name of this widget, if the widget supports having a name and one is set.
     fn get_name(&self) -> Option<WidgetStr> {
-        self.get_str_attribute(::attrs::NAME) 
-    }  
+        self.get_str_attribute(::attrs::NAME)
+    }
 
     /// Get the next child in the parent after this widget, based on the order in which they were 
     /// added.
@@ -163,6 +163,22 @@ pub struct WidgetStr<'a> {
     data: &'a str,
 }
 
+impl<'a> WidgetStr<'a> {
+    pub fn new(ptr: *mut iup_sys::Ihandle, name: &'static str, str_data: &'a str) -> WidgetStr<'a> {
+        let widgetStr = WidgetStr {
+            refcount: KISSContext::str_refcount(ptr, name),
+            data: str_data,
+        };
+        widgetStr.inc_refcount();
+        widgetStr
+    }
+
+    fn inc_refcount(&self) {
+        let refcount = self.refcount.get();
+        self.refcount.set(refcount + 1);
+    }
+}
+
 impl<'a> Borrow<str> for WidgetStr<'a> {
     fn borrow(&self) -> &str {
         self.data
@@ -197,8 +213,7 @@ impl<'a> Deref for WidgetStr<'a> {
 
 impl<'a> Clone for WidgetStr<'a> {
     fn clone(&self) -> Self {
-        let refcount = self.refcount.get();
-        self.refcount.set(refcount + 1);
+        self.inc_refcount();
 
         WidgetStr {
             refcount: self.refcount.clone(),
@@ -210,8 +225,7 @@ impl<'a> Clone for WidgetStr<'a> {
 impl<'a> Drop for WidgetStr<'a> {
     fn drop(&mut self) {
         let refcount = self.refcount.get();
-        println!("refcount of '{}' was {}", self.data, refcount);
-        if refcount > 0 { self.refcount.set(refcount - 1);}
+        self.refcount.set(refcount - 1);
     }
 }
 
@@ -272,10 +286,7 @@ pub trait IUPWidget: Copy {
                 // We're forcing IUP to use UTF-8 
                 let str_data = ::std::str::from_utf8_unchecked(c_str.to_bytes());
 
-                Some(WidgetStr {
-                    refcount: KISSContext::str_refcount(self.ptr(), name),
-                    data: str_data,
-                })
+                Some(WidgetStr::new(self.ptr(), name, str_data))
             }
         } else {
             None
