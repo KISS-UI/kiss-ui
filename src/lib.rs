@@ -129,7 +129,7 @@ impl KISSContext {
                 .entry(widget).or_insert_with(HashMap::new)
                 .entry(str_).or_insert_with(|| Rc::new(Cell::new(0)))
                 .clone()
-        )        
+        )
     }
 
     fn store_widget<N: Into<String>, W: Widget>(name: N, widget: W) -> Option<BaseWidget> {
@@ -201,6 +201,3 @@ pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> Dialog + Send {
 
     KISS_RUNNING.store(false, Ordering::SeqCst); 
 }
-
-
-
