@@ -28,14 +28,14 @@
 extern crate libc;
 extern crate iup_sys;
 
-
-macro_rules! assert_kiss_running (
+macro_rules! assert_kiss_running(
     () => (
         assert!(
-            ::KISS_RUNNING.load(::std::sync::atomic::Ordering::Acquire), 
-            "No KISS-UI widget methods may be called before `kiss_ui::show_gui()` is invoked or after it returns!"
+            ::KISSContext::is_running(),
+            "No KISS-UI APIs except for `kiss_ui::show_gui()` may be invoked while KISS-UI is not running (on the current thread)!"
         )
     )
+
 );
 
 #[macro_use]
@@ -66,6 +66,7 @@ use std::collections::HashMap;
 use std::ptr;
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, ATOMIC_BOOL_INIT, Ordering};
+use std::thread;
 
 use base::BaseWidget;
 use dialog::Dialog;
@@ -90,30 +91,29 @@ pub mod prelude {
     pub use widget::{Widget, Destroy};
 }
 
-static KISS_RUNNING: AtomicBool = ATOMIC_BOOL_INIT;
-
-thread_local! { static CONTEXT: KISSContext = KISSContext::default() }
+thread_local! { 
+    static CONTEXT_PTR: Cell<*const KISSContext> = Cell::new(ptr::null()) 
+}
 
 #[derive(Default)]
 struct KISSContext {
     widget_store: RefCell<HashMap<String, BaseWidget>>,
     // FIXME: use Rc<()> once Rc::is_unique stabilizes
     borrowed_strs: RefCell<HashMap<IUPPtr, HashMap<&'static str, Rc<Cell<usize>>>>>,
+    drops: RefCell<Vec<Box<FnOnce()>>>,
 }
 
 impl KISSContext {
     fn assert_str_not_borrowed(widget: IUPPtr, str_: &'static str) {
         assert_kiss_running!();
 
-        let is_borrowed = CONTEXT.with(|context|
-            context.borrowed_strs.borrow()
-                .get(&widget)
-                .and_then(|widget_strs| 
-                     widget_strs.get(str_)
-                        .map(|refcount| refcount.get() != 0)
-                )
-                .unwrap_or(false)
-        );
+        let is_borrowed = Self::get_ref().borrowed_strs.borrow()
+            .get(&widget)
+            .and_then(|widget_strs| 
+                widget_strs.get(str_)
+                    .map(|refcount| refcount.get() != 0)
+            )
+            .unwrap_or(false);
 
         assert!(
             !is_borrowed, 
@@ -124,35 +124,47 @@ impl KISSContext {
     fn str_refcount(widget: IUPPtr, str_: &'static str) -> Rc<Cell<usize>> {
         assert_kiss_running!();
 
-        CONTEXT.with(|context|
-            context.borrowed_strs.borrow_mut()
-                .entry(widget).or_insert_with(HashMap::new)
-                .entry(str_).or_insert_with(|| Rc::new(Cell::new(0)))
-                .clone()
-        )
+        Self::get_ref().borrowed_strs.borrow_mut()
+            .entry(widget).or_insert_with(HashMap::new)
+            .entry(str_).or_insert_with(|| Rc::new(Cell::new(0)))
+            .clone()
     }
 
     fn store_widget<N: Into<String>, W: Widget>(name: N, widget: W) -> Option<BaseWidget> {
-        CONTEXT.with(|context|
-            context.widget_store.borrow_mut()
-                .insert(name.into(), widget.to_base())
-        )
+        Self::get_ref().widget_store.borrow_mut()
+            .insert(name.into(), widget.to_base())
     }
 
     fn load_widget<N: Borrow<str>>(name: &N) -> Option<BaseWidget> {
-        CONTEXT.with(|context|
-            context.widget_store.borrow().get(name.borrow()).cloned()
-        )
+        Self::get_ref().widget_store.borrow()
+            .get(name.borrow()).cloned()
     }
 
-    unsafe fn clear() {
-        CONTEXT.with(|context| {
-            context.widget_store.borrow_mut().clear();
-            context.borrowed_strs.borrow_mut().clear();
-        })
+    fn get_ref<'a>() -> &'a KISSContext {
+        assert_kiss_running!();
+
+        unsafe {
+            &*Self::get_ptr()
+        }
+    }
+    
+    #[inline]
+    fn is_running() -> bool {
+        !Self::get_ptr().is_null()
+    }
+
+    #[inline]
+    fn get_ptr() -> *const KISSContext {
+        CONTEXT_PTR.with(Cell::get)
+    }
+
+    fn store_for_drop<T: 'static>(val: T) {
+        assert_kiss_running!();
+        
+        Self::get_ref().drops.borrow_mut()
+            .push(Box::new(move || drop(val)))    
     }
 }
-
 
 /// The entry point for KISS-UI. The closure argument should initialize and call `.show()`.
 ///
@@ -180,24 +192,41 @@ impl KISSContext {
 /// Since no widget types are `Send`, this bound prevents this from happening without requiring
 /// all widget methods to check if they were invoked in a valid context.
 pub fn show_gui<F>(init_fn: F) where F: FnOnce() -> Dialog + Send {
-    assert!(
-        !KISS_RUNNING.compare_and_swap(false, true, Ordering::SeqCst), 
-        "KISS-UI may only be running (in `kiss_ui::show_gui()`) in one thread at a time!"
-    );
+    static IS_RUNNING: AtomicBool = ATOMIC_BOOL_INIT;
 
+    assert!(
+        !IS_RUNNING.compare_and_swap(false, true, Ordering::AcqRel),
+        "KISS-UI may only be running in one thread at a time!"
+    );
+    
     unsafe { 
         assert!(iup_sys::IupOpen(ptr::null(), ptr::null()) == 0);
         // Force IUP to always use UTF-8
         iup_sys::IupSetGlobal(::attrs::UTF8_MODE.as_cstr(), ::attrs::values::YES.as_cstr());
-    }   
+    }
+
+    let context = KISSContext::default();
+    CONTEXT_PTR.with(|cell| cell.set(&context));
 
     init_fn().show();
 
     unsafe { 
         iup_sys::IupMainLoop();
         iup_sys::IupClose();
-        KISSContext::clear();
     }
 
-    KISS_RUNNING.store(false, Ordering::SeqCst); 
+    CONTEXT_PTR.with(|cell| cell.set(ptr::null()));
+
+    IS_RUNNING.store(false, Ordering::Release);
+}
+
+// Use until `thread::catch_panic` stabilizes.
+struct PanicGuard;
+
+impl Drop for PanicGuard {
+    fn drop(&mut self) {
+        if thread::panicking() {
+            panic!("KISS-UI cannot handle panics safely yet; aborting!");
+        }
+    }
 }
