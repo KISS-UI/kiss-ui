@@ -100,7 +100,7 @@ struct KISSContext {
     widget_store: RefCell<HashMap<String, BaseWidget>>,
     // FIXME: use Rc<()> once Rc::is_unique stabilizes
     borrowed_strs: RefCell<HashMap<IUPPtr, HashMap<&'static str, Rc<Cell<usize>>>>>,
-    drops: RefCell<Vec<Box<FnOnce()>>>,
+    drops: RefCell<Vec<Box<BoxedDrop>>>,
 }
 
 impl KISSContext {
@@ -158,11 +158,10 @@ impl KISSContext {
         CONTEXT_PTR.with(Cell::get)
     }
 
-    fn store_for_drop<T: 'static>(val: T) {
+    fn store_for_drop(val: Box<BoxedDrop>) {
         assert_kiss_running!();
         
-        Self::get_ref().drops.borrow_mut()
-            .push(Box::new(move || drop(val)))    
+        Self::get_ref().drops.borrow_mut().push(val)    
     }
 }
 
@@ -230,3 +229,7 @@ impl Drop for PanicGuard {
         }
     }
 }
+
+trait BoxedDrop: 'static {}
+
+impl<T: ?Sized + 'static> BoxedDrop for T {}
