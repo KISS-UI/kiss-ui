@@ -165,12 +165,12 @@ pub struct WidgetStr<'a> {
 
 impl<'a> WidgetStr<'a> {
     pub fn new(ptr: *mut iup_sys::Ihandle, name: &'static str, str_data: &'a str) -> WidgetStr<'a> {
-        let widgetStr = WidgetStr {
+        let widget_str = WidgetStr {
             refcount: KISSContext::str_refcount(ptr, name),
             data: str_data,
         };
-        widgetStr.inc_refcount();
-        widgetStr
+        widget_str.inc_refcount();
+        widget_str
     }
 
     fn inc_refcount(&self) {

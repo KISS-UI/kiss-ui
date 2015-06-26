@@ -58,33 +58,51 @@ impl<Args, Out: Into<CallbackStatus>, F: 'static> Callback<Args> for F where F: 
 }
 
 #[doc(hidden)]
-pub type CallbackMap<T> = RefCell<HashMap<*mut Ihandle, Box<Callback<T>>>>;
+pub type CallbackMap<T> = RefCell<HashMap<*mut Ihandle, *mut Callback<T>>>;
+
+#[doc(hidden)]
+pub fn new_callback_map<T>() -> CallbackMap<T> {
+    RefCell::new(HashMap::new())    
+}
 
 macro_rules! callback_impl {
-    ($cb_attr:expr, $base:expr, $callback:expr, $self_ty:ident) => (
+    ($cb_attr:expr, $self_val:expr, $callback:expr, $self_ty:ident) => (
         { 
             thread_local!(
                 static CALLBACKS: ::callback::CallbackMap<$self_ty> = 
-                    ::std::cell::RefCell::new(::std::collections::HashMap::new())
+                    ::callback::new_callback_map()
             );
 
-            extern fn extern_callback(element: *mut ::iup_sys::Ihandle) 
+            fn callback_glue(element: *mut ::iup_sys::Ihandle)
             -> ::libc::c_int {
                 use ::callback::CallbackStatus;
 
                 let widget = unsafe { $self_ty::from_ptr(element) };
 
                 CALLBACKS.with(|callbacks| 
-                    callbacks.borrow_mut()
-                        .get_mut(&widget.ptr())
-                        .map(|cb| cb.on_callback(widget))
-                ).unwrap_or(CallbackStatus::Default).to_cb_return()
+                    callbacks.borrow()
+                        .get(&widget.ptr()).cloned()
+                )
+                .map(|callback| unsafe {
+                    (*callback).on_callback(widget)
+                })                    
+                .unwrap_or(CallbackStatus::Default).to_cb_return()
             }
 
+            extern fn ffi_callback_glue(element: *mut ::iup_sys::Ihandle) 
+            -> ::libc::c_int {
+                let _guard = ::PanicGuard;
+                callback_glue(element)
+            }
+            
+            let mut callback = Box::new($callback);
+
             CALLBACKS.with(|callbacks| 
-                callbacks.borrow_mut().insert($base.ptr(), Box::new($callback))
+                callbacks.borrow_mut().insert($self_val.ptr(), &mut *callback)
             );
-            $base.set_callback($cb_attr, extern_callback);                
+            
+            $self_val.set_callback($cb_attr, ffi_callback_glue);
+            ::KISSContext::store_for_drop(callback);
         }
     )
 }
