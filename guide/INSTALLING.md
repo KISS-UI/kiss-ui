@@ -1,18 +1,33 @@
-% Installing IUP
+% Setting up KISS-UI
 
-KISS-UI depends on the IUP library for C, created by Tecgraf, for a common abstraction on top of various operating systems (Windows, Linux) and their GUI systems (WinAPI, GTK+).
+####Getting the crate
+
+To get the KISS-UI crate, all you have to do is add the following to your `Cargo.toml`:
+
+```notest
+[dependencies.kiss-ui]
+git = "https://github.com/cybergeek94/kiss-ui"
+```
+
+The `kiss-ui` crate will be made available on Crates.io in the near future, probably once it's more feature-complete and the API stabilizes a bit.
+
+####Installing dependencies
+
+KISS-UI has only one external dependency: the IUP library for C, created by Tecgraf.
+
+KISS-UI relies on IUP for abstracting out the various operating systems (Windows, Linux) and their GUI frameworks (WinForms, GTK+). This dependency might be removed in some future version of KISS-UI, as there currently exists no mature Cocoa-based backend for IUP on OS X.
 
 You will need to install the IUP binaries for your system, which are available for download [here][iup-dl].
 
 Consult the following for which files to download and where to install them. The specific steps depend on your platform and preferred method of linking: dynamic or static.
 
-PRs amending or adding instructions for any platform are very welcome.
-
-[iup-dl]: http://sourceforge.net/projects/iup/files/3.14/
-
 * [Windows](#windows)
 * [Linux](#linux)
 * [OS X](#os-x)
+
+PRs amending or adding instructions for any platform are very welcome.
+
+[iup-dl]: http://sourceforge.net/projects/iup/files/3.14/
 
 ***
 ###Windows

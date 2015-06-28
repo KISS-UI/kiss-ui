@@ -2,6 +2,6 @@
 
 # Summary
 
-* [Installing IUP](INSTALLING.md)
+* [Setup](INSTALLING.md)
 * [Basics](BASICS.md)
 * [Callbacks](CALLBACKS.md)
