@@ -6,6 +6,8 @@ Powered by the [IUP][iup] GUI library for C by Tecgraf, via the bindings created
 
 (No relation to the equally awesome [kiss3d][kiss3d].)
 
+####KISS-UI builds on all Rust release channels!
+
 [kiss3d]: https://github.com/sebcrozet/kiss3d
 [iup]: http://webserver2.tecgraf.puc-rio.br/iup/
 [iup-rust]: https://github.com/dcampbell24/iup-rust
@@ -24,28 +26,8 @@ Contents
 
 Documentation
 -------------
-[`kiss-ui` docs hosted on Github Pages](http://cybergeek94.github.io/kiss-ui)
-
-Usage
------
-
-Simply add the following to your `Cargo.toml`:
-
-```
-[dependencies.kiss-ui]
-git = "https://github.com/cybergeek94/kiss-ui"
-```
-
-Import KISS-UI's macros and common types:
-
-```rust
-#[macro_use]
-extern crate kiss_ui;
-
-use kiss_ui::prelude::*
-```
-
-####KISS-UI builds on all Rust release channels!
+[User Guide (Getting Up and Running)](http://cybergeek94.github.io/kiss-ui/docs/guide)
+[API Documentation](http://cybergeek94.github.io/kiss-ui/docs/api)
 
 Comparison to Other UI Frameworks
 ---------------------------------
