@@ -46,5 +46,5 @@ fn main() {
 
 If you need to access the same values from multiple closures, you should place said values in `Rc`, and pass a clone to each closure. You can use `RefCell` or `Cell` if you need to be able to mutate them.
 
-Additionally, you might find the `thread_local!{}` macro useful. It allows you to store data statically but each thread has its own independent view of the data so the stored type doesn't need to be `Sync`. Have a look in the Rust API documentation for more info, or you can see how KISS-UI uses it in [`lib.rs`](../../src/lib.rs) and [`callbacks.rs`](../../src/callbacks.rs).
+Additionally, you might find the `thread_local!{}` macro useful. It allows you to store data statically but each thread has its own independent view of the data so the stored type doesn't need to be `Sync`. Have a look in the Rust API documentation for more info, or you can see how KISS-UI uses it in [`lib.rs`](../../src/lib.rs) and [`callback.rs`](../../src/callback.rs).
 	
