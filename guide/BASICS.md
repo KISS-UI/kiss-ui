@@ -12,7 +12,7 @@ Most of the implementation details of KISS-UI, including the event loop, are not
 
 KISS-UI is initialized with a single function, which initializes the underlying IUP library and starts the event loop running. Here, you can see how to import KISS-UI and call the initialization function, `show_gui()`, to show a basic window that tells the user, "Hello, world!":
 
-```rust
+```notest
 
 #[macro_use]
 extern crate kiss_ui;
