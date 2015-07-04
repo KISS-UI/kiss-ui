@@ -26,8 +26,8 @@ Contents
 
 Documentation
 -------------
-[User Guide (Getting Up and Running)](http://cybergeek94.github.io/kiss-ui/docs/guide)
-[API Documentation](http://cybergeek94.github.io/kiss-ui/docs/api)
+* [User Guide (Getting Up and Running)](http://cybergeek94.github.io/kiss-ui/docs/guide)
+* [API Documentation](http://cybergeek94.github.io/kiss-ui/docs/api/kiss_ui/)
 
 Comparison to Other UI Frameworks
 ---------------------------------
