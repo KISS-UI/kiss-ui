@@ -5,4 +5,5 @@ Cargo.lock
 *~
 *.swp
 
-guide/_book
+guide/_book/
+guide/rustbook/
