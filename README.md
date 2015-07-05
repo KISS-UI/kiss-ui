@@ -120,7 +120,7 @@ Once the installer completes, you are finished. If you later want to uninstall I
 ***
 ###OS X
 
-Before you install IUP, you need to install GTK+. (An IUP driver for Cocoa was under development, but as of 7/l5/2015 is not being worked on.) You can use version 2.x or 3.x, IUP will work with both. 
+Before you install IUP, you need to install GTK+. (An IUP driver for Cocoa was under development, but as of 7/5/2015 is not being worked on.) You can use version 2.x or 3.x, IUP will work with both. 
 
 To install GTK+ 2:
 
