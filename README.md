@@ -120,7 +120,23 @@ Once the installer completes, you are finished. If you later want to uninstall I
 ***
 ###OS X
 
-You can download and install the precompiled Mac OS X binary available [here][os-x]. It appears the only download available is for OS X 10.10 64-bit.
+Before you install IUP, you need to install GTK+. (An IUP driver for Cocoa was under development, but as of 7/5/2015 is not being worked on.) You can use version 2.x or 3.x, IUP will work with both. 
+
+To install GTK+ 2:
+
+```
+brew install gtk+
+```
+
+To install GTK+ 3:
+
+```
+brew install gtk+3
+```
+
+**Note:** if you have troubles building after installing GTK+ 3, please consult [this StackOverflow answer](http://stackoverflow.com/a/20114598/1299804).
+
+Once GTK+ is installed, you can download and install the precompiled Mac OS X IUP binary available [here][os-x]. It appears the only download available is for OS X 10.10 64-bit.
 
 Once you have downloaded the tarball, the installation process *should be* equivalent to Linux's starting at **Step 4**.
 

@@ -68,15 +68,61 @@ impl Orientation {
 }
 
 
-fn raw_handle_vec<B>(widgets: B) -> Vec<*mut ::iup_sys::Ihandle> where B: AsRef<[BaseWidget]> {
+fn raw_handle_vec<B>(widgets: B) -> Vec<IUPPtr> where B: AsRef<[BaseWidget]> {
     let mut raw_handles: Vec<_> = widgets.as_ref().iter().cloned().map(BaseWidget::ptr).collect();
     raw_handles.push(::std::ptr::null_mut());
     raw_handles
 }
 
+/// A builder for `Absolute`, used to create and add children.
+pub struct AbsoluteBuilder {
+    handles: Vec<IUPPtr>,
+}
+
+impl AbsoluteBuilder {
+    fn new() -> AbsoluteBuilder {
+        AbsoluteBuilder { handles: Vec::new() }
+    }
+
+    /// Add a child to the `Absolute` at the given coordinates, relative to the top-left corner of
+    /// the container.
+    pub fn add_child_at<W: Widget>(&mut self, x: u32, y: u32, child: W) -> &mut Self {
+        Absolute::set_child_pos(x, y, child);
+        self.handles.push(child.ptr());
+        self
+    }
+}
+
+
 /// A container type that makes no effort to arrange its children. Instead, they must be positioned
 /// manually.
 pub struct Absolute(IUPPtr);
+
+impl Absolute {
+    /// Create a new absolute container using the given closure, which will be passed a mutable builder
+    /// instance.
+    ///
+    /// The builder is necessary to ensure that the children have their positions set correctly, as
+    /// `Widget::set_position` will not set the attributes that this particular container is
+    /// expecting.
+    pub fn new<F>(build_fn: F) -> Absolute where F: FnOnce(&mut AbsoluteBuilder) {
+        let mut builder = AbsoluteBuilder::new();
+        build_fn(&mut builder);
+
+        unsafe {
+            let ptr = ::iup_sys::IupCboxv(builder.handles.as_mut_ptr());
+            Self::from_ptr(ptr)
+        }
+    }
+
+    /// Set the position of a child of an `Absolute` relative to its top-left corner.
+    pub fn set_child_pos<W: Widget>(x: u32, y: u32, child: W) {
+        child.set_int_attribute(::attrs::CX, x as i32);
+        child.set_int_attribute(::attrs::CY, y as i32);
+    }
+}
+
+impl_widget! { Absolute, "cbox" }
 
 /// A container widget that lines up its children from left to right.
 pub struct Horizontal(IUPPtr);

@@ -1,6 +1,5 @@
 env:
   global:
-    - secure: LBCp1Sz9ofbWbyN0GtpbICw0CZW4Hw+iOrw1zYJInHtS4/dJjrHjKJqy8aRB2rBPwc7Mt8sSgRVirj90XA0UwDD8nennQB9m8diXYOm03Itj+/2iKJCMchM8r/cNmaYeHelYcEHzLHykNaWSZ08gj0Bz3hDYVMI4ey4h1CpIdwM=
     - IUP_DL='http://sourceforge.net/projects/iup/files/3.14/Linux%20Libraries/iup-3.14_Linux32_64_lib.tar.gz'
 
 language: rust
@@ -21,7 +20,3 @@ script:
   - cargo test -v
   - cargo doc -v --no-deps
 
-after_script:
-  - mv target/doc/ doc/
-  # Docs Upload
-  - curl http://www.rust-ci.org/artifacts/put?t=$RUSTCI_TOKEN | sh

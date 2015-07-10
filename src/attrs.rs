@@ -18,6 +18,10 @@ c_str_consts! {
     ALIGNMENT_HORI = "ALIGNMENTCOL",
     ORIENTATION = "ORIENTATION",
     NUMDIV = "numdiv",
+    
+    // Specific to `Absolute`
+    CX = "CX",
+    CY = "CY",
 
     //Textbox attributes
     MULTILINE = "MULTILINE",
@@ -44,7 +48,7 @@ c_str_consts! {
     ACTION = "ACTION",
     ACTION_CB = "ACTION_CB",
     VALUE_CHANGED_CB = "VALUECHANGED_CB",
-    MAP_CB = "MAP_CB",
+    MAP_CB = "MAP_CB", 
 }
 
 pub mod values {
