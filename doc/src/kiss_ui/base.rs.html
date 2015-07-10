@@ -146,8 +146,8 @@
         }
     }
 
-    <span class='comment'>// These are not meant for end-users to call.</span>
-    <span class='comment'>// They are an implementation detail of `try_downcast()`.</span>
+    <span class='comment'>// These are not meant for end-users to call.</span>
+    <span class='comment'>// They are an implementation detail of `try_downcast()`.</span>
     <span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
     <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>downcast</span>(<span class='ident'>base</span>: <span class='ident'>BaseWidget</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
         <span class='ident'>Self</span>::<span class='ident'>from_ptr</span>(<span class='ident'>base</span>.<span class='ident'>ptr</span>())

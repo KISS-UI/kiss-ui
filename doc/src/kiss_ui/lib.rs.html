@@ -243,9 +243,6 @@
 <span id="201">201</span>
 <span id="202">202</span>
 <span id="203">203</span>
-<span id="204">204</span>
-<span id="205">205</span>
-<span id="206">206</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A UI framework for Rust based on the KISS principle: &quot;Keep It Simple, Stupid!&quot;</span>
 <span class='doccomment'>//!</span>
@@ -293,10 +290,10 @@
 <span class='attribute'>#[<span class='ident'>macro_use</span>]</span>
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>utils</span>;
 
-<span class='comment'>// Internal use modules</span>
+<span class='comment'>// Internal use modules</span>
 <span class='kw'>mod</span> <span class='ident'>attrs</span>;
 
-<span class='comment'>// User-facing modules</span>
+<span class='comment'>// User-facing modules</span>
 <span class='attribute'>#[<span class='ident'>macro_use</span>]</span>
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>callback</span>;
 
@@ -346,7 +343,7 @@
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Default</span>)]</span>
 <span class='kw'>struct</span> <span class='ident'>KISSContext</span> {
     <span class='ident'>widget_store</span>: <span class='ident'>RefCell</span><span class='op'>&lt;</span><span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>BaseWidget</span><span class='op'>&gt;&gt;</span>,
-    <span class='comment'>// FIXME: use Rc&lt;()&gt; once Rc::is_unique stabilizes</span>
+    <span class='comment'>// FIXME: use Rc&lt;()&gt; once Rc::is_unique stabilizes</span>
     <span class='ident'>borrowed_strs</span>: <span class='ident'>RefCell</span><span class='op'>&lt;</span><span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>IUPPtr</span>, <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span>, <span class='ident'>Rc</span><span class='op'>&lt;</span><span class='ident'>Cell</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;</span>,
 }
 
@@ -365,7 +362,7 @@
         );
 
         <span class='macro'>assert</span><span class='macro'>!</span>(
-            <span class='ident'>is_borrowed</span>, 
+            <span class='op'>!</span><span class='ident'>is_borrowed</span>, 
             <span class='string'>&quot;Cannot update the value of a string property of a widget if it&#39;s been previously borrowed!&quot;</span>
         );                
     }
@@ -378,7 +375,7 @@
                 .<span class='ident'>entry</span>(<span class='ident'>widget</span>).<span class='ident'>or_insert_with</span>(<span class='ident'>HashMap</span>::<span class='ident'>new</span>)
                 .<span class='ident'>entry</span>(<span class='ident'>str_</span>).<span class='ident'>or_insert_with</span>(<span class='op'>||</span> <span class='ident'>Rc</span>::<span class='ident'>new</span>(<span class='ident'>Cell</span>::<span class='ident'>new</span>(<span class='number'>0</span>)))
                 .<span class='ident'>clone</span>()
-        )        
+        )
     }
 
     <span class='kw'>fn</span> <span class='ident'>store_widget</span><span class='op'>&lt;</span><span class='ident'>N</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>, <span class='ident'>W</span>: <span class='ident'>Widget</span><span class='op'>&gt;</span>(<span class='ident'>name</span>: <span class='ident'>N</span>, <span class='ident'>widget</span>: <span class='ident'>W</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>BaseWidget</span><span class='op'>&gt;</span> {
@@ -436,7 +433,7 @@
 
     <span class='kw'>unsafe</span> { 
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>iup_sys</span>::<span class='ident'>IupOpen</span>(<span class='ident'>ptr</span>::<span class='ident'>null</span>(), <span class='ident'>ptr</span>::<span class='ident'>null</span>()) <span class='op'>==</span> <span class='number'>0</span>);
-        <span class='comment'>// Force IUP to always use UTF-8</span>
+        <span class='comment'>// Force IUP to always use UTF-8</span>
         <span class='ident'>iup_sys</span>::<span class='ident'>IupSetGlobal</span>(::<span class='ident'>attrs</span>::<span class='ident'>UTF8_MODE</span>.<span class='ident'>as_cstr</span>(), ::<span class='ident'>attrs</span>::<span class='ident'>values</span>::<span class='ident'>YES</span>.<span class='ident'>as_cstr</span>());
     }   
 
@@ -450,9 +447,6 @@
 
     <span class='ident'>KISS_RUNNING</span>.<span class='ident'>store</span>(<span class='boolval'>false</span>, <span class='ident'>Ordering</span>::<span class='ident'>SeqCst</span>); 
 }
-
-
-
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

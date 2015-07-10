@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `OnValueChange` trait in crate `kiss_ui`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, OnValueChange">
+    <meta name="description" content="API documentation for the Rust `AbsoluteBuilder` struct in crate `kiss_ui`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, AbsoluteBuilder">
 
-    <title>kiss_ui::callback::OnValueChange - Rust</title>
+    <title>kiss_ui::container::AbsoluteBuilder - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>kiss_ui</a>::<wbr><a href='index.html'>callback</a></p><script>window.sidebarCurrent = {name: 'OnValueChange', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>kiss_ui</a>::<wbr><a href='index.html'>container</a></p><script>window.sidebarCurrent = {name: 'AbsoluteBuilder', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -40,26 +40,19 @@
         </form>
     </nav>
 
-    <section id='main' class="content trait">
-<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>kiss_ui</a>::<wbr><a href='index.html'>callback</a>::<wbr><a class='trait' href=''>OnValueChange</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>kiss_ui</a>::<wbr><a href='index.html'>container</a>::<wbr><a class='struct' href=''>AbsoluteBuilder</a></span><span class='out-of-band'><span id='render-detail'>
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1866' class='srclink' href='../../src/kiss_ui/callback.rs.html#110-112' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait OnValueChange: <a class='trait' href='../../kiss_ui/widget/trait.Widget.html' title='kiss_ui::widget::Widget'>Widget</a> {
-    fn <a href='#tymethod.set_on_value_changed' class='fnname'>set_on_value_changed</a>&lt;Cb&gt;(self, on_value_chaged: Cb) -&gt; Self <span class='where'>where Cb: <a class='trait' href='../../kiss_ui/callback/trait.Callback.html' title='kiss_ui::callback::Callback'>Callback</a>&lt;Self&gt;</span>;
-}</pre><div class='docblock'><p>A trait describing a widget which has a value that can be changed by the user, and can notify
-client code when this occurs.</p>
-</div>
-            <h2 id='required-methods'>Required Methods</h2>
-            <div class='methods'>
-        <h3 id='tymethod.set_on_value_changed' class='method stab '><code>fn <a href='#tymethod.set_on_value_changed' class='fnname'>set_on_value_changed</a>&lt;Cb&gt;(self, on_value_chaged: Cb) -&gt; Self <span class='where'>where Cb: <a class='trait' href='../../kiss_ui/callback/trait.Callback.html' title='kiss_ui::callback::Callback'>Callback</a>&lt;Self&gt;</span></code></h3></div>
-        <h2 id='implementors'>Implementors</h2>
-        <ul class='item-list' id='implementors-list'>
-    <li><code>impl <a class='trait' href='../../kiss_ui/callback/trait.OnValueChange.html' title='kiss_ui::callback::OnValueChange'>OnValueChange</a> for <a class='struct' href='../../kiss_ui/text/struct.TextBox.html' title='kiss_ui::text::TextBox'>TextBox</a></code></li>
-</ul><script type="text/javascript" async
-                              src="../../implementors/kiss_ui/callback/trait.OnValueChange.js">
-                      </script></section>
+        </span><a id='src-2705' class='srclink' href='../../src/kiss_ui/container.rs.html#78-80' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct AbsoluteBuilder {
+    // some fields omitted
+}</pre><div class='docblock'><p>A builder for <code>Absolute</code>, used to create and add children.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../kiss_ui/container/struct.AbsoluteBuilder.html' title='kiss_ui::container::AbsoluteBuilder'>AbsoluteBuilder</a></code></h3><div class='impl-items'><h4 id='method.add_child_at' class='method'><code>fn <a href='#method.add_child_at' class='fnname'>add_child_at</a>&lt;W: <a class='trait' href='../../kiss_ui/widget/trait.Widget.html' title='kiss_ui::widget::Widget'>Widget</a>&gt;(&amp;mut self, x: <a href='http://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>, y: <a href='http://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>, child: W) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Add a child to the <code>Absolute</code> at the given coordinates, relative to the top-left corner of
+the container.</p>
+</div></div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

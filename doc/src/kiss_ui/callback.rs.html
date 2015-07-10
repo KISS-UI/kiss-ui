@@ -195,13 +195,13 @@
 <span class='doccomment'>/// the dialog containing the widget on which the callback was invoked will be closed.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>CallbackStatus</span> {
-    <span class='comment'>//Ignore,</span>
+    <span class='comment'>//Ignore,</span>
     <span class='doccomment'>/// The default `CallbackStatus`, does nothing when set.</span>
     <span class='ident'>Default</span>,
     <span class='doccomment'>/// If this is set within a callback, then when the callback returns the dialog containing the</span>
     <span class='doccomment'>/// widget on which the callback was invoked will be closed.</span>
     <span class='ident'>Close</span>,
-    <span class='comment'>//Continue,</span>
+    <span class='comment'>//Continue,</span>
 }
 
 <span class='kw'>impl</span> <span class='ident'>CallbackStatus</span> {
@@ -216,7 +216,7 @@
         <span class='kw'>match</span> <span class='self'>self</span> {
             <span class='ident'>Close</span> <span class='op'>=&gt;</span> ::<span class='ident'>iup_sys</span>::<span class='ident'>IUP_CLOSE</span>,
             <span class='ident'>Default</span> <span class='op'>=&gt;</span> ::<span class='ident'>iup_sys</span>::<span class='ident'>IUP_DEFAULT</span>,
-            <span class='comment'>// _ =&gt; unimplemented!(),</span>
+            <span class='comment'>// _ =&gt; unimplemented!(),</span>
         }
     }
 }
