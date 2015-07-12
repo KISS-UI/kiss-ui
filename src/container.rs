@@ -205,7 +205,7 @@ impl Grid {
 
     /// Based on the orientation, set the number of children to place in a:
     ///
-    /// * `Vertial`: **column**
+    /// * `Vertical`: **column**
     /// * `Horizontal`: **row**
     ///
     /// before beginning the next one.
