@@ -42,7 +42,7 @@ Import KISS-UI's macros and common types:
 #[macro_use]
 extern crate kiss_ui;
 
-use kiss_ui::prelude::*
+use kiss_ui::prelude::*;
 ```
 
 ####KISS-UI builds on all Rust release channels!
