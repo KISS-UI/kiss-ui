@@ -1,19 +1,19 @@
 env:
-  global:
-    - IUP_DL='http://sourceforge.net/projects/iup/files/3.14/Linux%20Libraries/iup-3.14_Linux32_64_lib.tar.gz'
 
 language: rust
 
 install:
   - sudo apt-get install libgtk-3-dev
   
-  # Download and install IUP
-  - mkdir iup_libs/
-  - wget $IUP_DL -O iup_libs.tar.gz
-  - tar -xzvf iup_libs.tar.gz -C iup_libs/
-  # By piping a newline to ./install, we skip the enter prompt
-  - (cd iup_libs/ && echo -ne '\n' | sudo ./install)
-  - rm -rf iup_libs/
+before_script:
+ - pwd
+ - gcc -v
+ - clang -v
+ - git clone https://github.com/ivanceras/iup iup
+ - cd iup
+ - make
+ - echo -ne '\n' && sudo sh install
+
   
 script:
   - cargo build -v
