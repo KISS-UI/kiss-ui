@@ -12,6 +12,9 @@ before_script:
  - git clone https://github.com/ivanceras/iup iup
  - cd iup
  - sh build.sh
+ - pwd
+ - ls -la
+ - ls -la ./lib
  - echo -ne '\n' && sudo sh install
 
   
