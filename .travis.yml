@@ -19,7 +19,7 @@ before_script:
  - tree ./lib
  - uname -a
  - uname -s 
- - echo -ne '\n' | sudo sh install
+ - echo -ne '\n' | sudo bash install
 
   
 script:
