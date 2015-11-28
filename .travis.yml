@@ -9,9 +9,9 @@ install:
 before_script:
  - gcc -v
  - clang -v
- - git clone https://github.com/ivanceras/iup-mirror iup-mirror
+ - git clone https://github.com/ivanceras/iup-mirror
  - cd iup-mirror
- - make || {echo "silencing the make build error"; exit 0}
+ - make || {echo "silencing the make build error";}
  - tree ./lib
  - echo -ne '\n' | sudo bash install
 
