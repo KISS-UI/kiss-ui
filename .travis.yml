@@ -12,11 +12,13 @@ before_script:
  - clang -v
  - git clone https://github.com/ivanceras/iup iup
  - cd iup
- - sh build.sh
+ - bash build.sh
  - pwd
  - ls -la
  - ls -la ./lib
  - tree ./lib
+ - uname -a
+ - uname -s 
  - echo -ne '\n' | sudo sh install
 
   
