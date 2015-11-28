@@ -11,7 +11,7 @@ before_script:
  - clang -v
  - git clone https://github.com/ivanceras/iup iup
  - cd iup
- - make
+ - sh build.sh
  - echo -ne '\n' && sudo sh install
 
   
