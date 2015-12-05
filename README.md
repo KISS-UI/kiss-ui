@@ -24,7 +24,7 @@ Contents
 
 Documentation
 -------------
-[`kiss-ui` docs hosted on Github Pages](http://cybergeek94.github.io/kiss-ui)
+[`kiss-ui` docs hosted on Github Pages](http://kiss-ui.github.io/kiss-ui/doc/kiss_ui/)
 
 Usage
 -----
