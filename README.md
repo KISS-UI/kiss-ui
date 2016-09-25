@@ -31,7 +31,7 @@ Usage
 
 Simply add the following to your `Cargo.toml`:
 
-```
+```toml
 [dependencies.kiss-ui]
 git = "https://github.com/cybergeek94/kiss-ui"
 ```
