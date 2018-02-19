@@ -45,7 +45,7 @@ extern crate kiss_ui;
 use kiss_ui::prelude::*;
 ```
 
-####KISS-UI builds on all Rust release channels!
+#### KISS-UI builds on all Rust release channels!
 
 [iup-dl]: http://sourceforge.net/projects/iup/files/3.14/
 
@@ -59,8 +59,8 @@ Consult the following for which files to download and where to install them. The
 PRs amending or adding instructions for any platform are very welcome.
 
 ***
-###Windows
-####Dynamic linking
+### Windows
+#### Dynamic linking
 1. Navigate to `Windows Libraries/Dynamic`
   * 32-bit: Download `iup-3.14_Win32_dllw4_lib.zip`
   * 64-bit: Download `iup-3.14_Win64_dllw4_lib.zip`
@@ -75,11 +75,11 @@ PRs amending or adding instructions for any platform are very welcome.
 
 You should **NEVER** place arbitrary files in your Windows install folder, no matter how benign.
 
-####Static Linking
+#### Static Linking
 Static linking with IUP on Windows is not currently possible as it requires resource scripts (`.rc`) files from IUP to be compiled and linked in, which Rust does not currently support.
 
 ***
-###Linux
+### Linux
 The Linux binary packages for IUP include both static and dynamic libraries. While efforts are underway to create up-to-date packages for various distributions' package managers, the currently most well supported methods of obtaining IUP binaries are to either compile them from source or download precompiled binaries from the creators.
 
 
@@ -118,7 +118,7 @@ Once the installer completes, you are finished. If you later want to uninstall I
 [iup-compile]: http://webserver2.tecgraf.puc-rio.br/iup/en/guide.html#buildlib
 [iup-source]: http://webserver2.tecgraf.puc-rio.br/iup/en/svn.html
 ***
-###OS X
+### OS X
 
 Before you install IUP, you need to install GTK+. (An IUP driver for Cocoa was under development, but as of 7/5/2015 is not being worked on.) You can use version 2.x or 3.x, IUP will work with both. 
 
